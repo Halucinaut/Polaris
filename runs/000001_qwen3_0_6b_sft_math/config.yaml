@@ -1,0 +1,67 @@
+project:
+  name: polaris
+  version: 0.1.0
+  description: ''
+run:
+  id: null
+  name: qwen3_0_6b_sft_math
+  output_dir: runs
+  tags:
+  - sft
+  - math
+  - 0.6b
+  notes: ''
+model:
+  name: Qwen3-0.6B
+  path: Qwen/Qwen3-0.6B
+  revision: main
+  dtype: bfloat16
+  chat_template: null
+data:
+  name: openr1_math_subset
+  path: data/math/splits/openr1_math_5k.jsonl
+  split: train
+  max_samples: 5000
+  seed: 42
+training:
+  method: sft
+  num_epochs: 3
+  batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 5.0e-05
+  warmup_ratio: 0.1
+  max_seq_length: 2048
+  max_grad_norm: 1.0
+  seed: 42
+  resume_from: null
+lora:
+  enabled: true
+  r: 32
+  alpha: 32
+  dropout: 0.0
+  target_modules: null
+  bias: none
+eval:
+  enabled: true
+  dataset: math_level_3_5
+  split: test
+  max_samples: 500
+  batch_size: 1
+  metrics:
+  - pass@1
+  - format_adherence
+  save_predictions: true
+logging:
+  level: INFO
+  log_every_n_steps: 10
+  save_every_n_steps: null
+  wandb:
+    enabled: false
+    project: null
+    entity: null
+    tags: []
+hardware:
+  device: mlx
+  num_gpus: null
+  memory_limit_gb: null
+  compile: false

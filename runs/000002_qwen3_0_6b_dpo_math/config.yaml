@@ -1,0 +1,67 @@
+project:
+  name: polaris
+  version: 0.1.0
+  description: ''
+run:
+  id: null
+  name: qwen3_0_6b_dpo_math
+  output_dir: runs
+  tags:
+  - dpo
+  - math
+  - 0.6b
+  notes: ''
+model:
+  name: Qwen3-0.6B
+  path: Qwen/Qwen3-0.6B
+  revision: main
+  dtype: bfloat16
+  chat_template: null
+data:
+  name: openr1_math_dpo_pairs
+  path: data/math/splits/dpo_pairs_5k.jsonl
+  split: train
+  max_samples: 5000
+  seed: 42
+training:
+  method: dpo
+  num_epochs: 2
+  batch_size: 2
+  gradient_accumulation_steps: 8
+  learning_rate: 5.0e-06
+  warmup_ratio: 0.1
+  max_seq_length: 2048
+  max_grad_norm: 1.0
+  seed: 42
+  resume_from: null
+lora:
+  enabled: true
+  r: 32
+  alpha: 32
+  dropout: 0.0
+  target_modules: null
+  bias: none
+eval:
+  enabled: true
+  dataset: math_level_3_5
+  split: test
+  max_samples: 500
+  batch_size: 1
+  metrics:
+  - preference_accuracy
+  - response_length_shift
+  save_predictions: true
+logging:
+  level: INFO
+  log_every_n_steps: 10
+  save_every_n_steps: null
+  wandb:
+    enabled: false
+    project: null
+    entity: null
+    tags: []
+hardware:
+  device: mlx
+  num_gpus: null
+  memory_limit_gb: null
+  compile: false

@@ -1,0 +1,1 @@
+{"timestamp": "2026-06-06T12:32:06.644240+00:00", "platform": "Darwin", "python_version": "3.12.13", "machine": "arm64", "processor": "arm", "memory_total_gb": null, "mlx_available": false, "torch_available": false, "mps_available": false}

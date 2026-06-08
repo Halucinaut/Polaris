@@ -1,0 +1,25 @@
+run:
+  name: "qwen3_0_6b_sft_math"
+  tags: ["sft", "math", "0.6b"]
+
+model:
+  name: "Qwen3-0.6B"
+  path: "Qwen/Qwen3-0.6B"
+
+data:
+  name: "openr1_math_subset"
+  path: "data/math/splits/openr1_math_5k.jsonl"
+  max_samples: 5000
+
+training:
+  method: "sft"
+  num_epochs: 3
+  batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 5.0e-5
+  max_seq_length: 2048
+
+eval:
+  dataset: "math_level_3_5"
+  max_samples: 500
+  metrics: ["pass@1", "format_adherence"]

@@ -1,0 +1,25 @@
+run:
+  name: "qwen3_0_6b_dpo_math"
+  tags: ["dpo", "math", "0.6b"]
+
+model:
+  name: "Qwen3-0.6B"
+  path: "Qwen/Qwen3-0.6B"
+
+data:
+  name: "openr1_math_dpo_pairs"
+  path: "data/math/splits/dpo_pairs_5k.jsonl"
+  max_samples: 5000
+
+training:
+  method: "dpo"
+  num_epochs: 2
+  batch_size: 2
+  gradient_accumulation_steps: 8
+  learning_rate: 5.0e-6
+  max_seq_length: 2048
+
+eval:
+  dataset: "math_level_3_5"
+  max_samples: 500
+  metrics: ["preference_accuracy", "response_length_shift"]

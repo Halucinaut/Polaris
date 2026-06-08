@@ -1,0 +1,1 @@
+{"step": 1, "split": "eval", "metrics": {"pass_at_1": 0.22, "invalid_output_rate": 0.16, "avg_completion_length": 132}, "timestamp": "2026-06-06T12:32:06.685774+00:00"}

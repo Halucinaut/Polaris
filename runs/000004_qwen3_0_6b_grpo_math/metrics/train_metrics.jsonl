@@ -1,0 +1,1 @@
+{"step": 1, "split": "train", "metrics": {"rollout_count": 20, "group_size": 2, "reward_mean": 0.25, "policy_logprob_mean": -1.8, "ref_logprob_mean": -1.9, "kl": 0.04, "loss": 0.32, "resume_ok": true, "checkpoint_written": true}, "timestamp": "2026-06-06T12:32:06.685643+00:00"}

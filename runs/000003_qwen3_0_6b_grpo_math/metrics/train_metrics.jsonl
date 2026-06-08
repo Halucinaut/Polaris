@@ -1,0 +1,2 @@
+{"step": 1, "split": "train", "metrics": {"reward_mean": 0.2, "reward_std": 0.1, "kl": 0.01, "entropy": 3.8}, "timestamp": "2026-06-06T12:32:06.643809+00:00"}
+{"step": 2, "split": "train", "metrics": {"reward_mean": 0.28, "reward_std": 0.12, "kl": 0.03, "entropy": 3.5}, "timestamp": "2026-06-06T12:32:06.643893+00:00"}

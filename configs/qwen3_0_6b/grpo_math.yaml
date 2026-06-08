@@ -1,0 +1,27 @@
+run:
+  name: "qwen3_0_6b_grpo_math"
+  tags: ["grpo", "math", "0.6b"]
+
+model:
+  name: "Qwen3-0.6B"
+  path: "Qwen/Qwen3-0.6B"
+
+data:
+  name: "math_level_3_5"
+  path: "data/math/splits/math_level_3_5.jsonl"
+  max_samples: 1000
+
+training:
+  method: "grpo"
+  num_epochs: 1
+  batch_size: 1
+  gradient_accumulation_steps: 1
+  learning_rate: 1.0e-6
+  max_seq_length: 2048
+  max_completion_length: 256
+  group_size: 2
+
+eval:
+  dataset: "math_level_3_5"
+  max_samples: 200
+  metrics: ["pass_at_1", "invalid_output_rate", "avg_completion_length"]

@@ -1,0 +1,1 @@
+{"sample_id": "math_000001", "prompt": "Solve: What is 2 + 3?", "before": "The answer is 5", "after": "<think>2 + 3 = 5</think>\n\nThe answer is 5", "reference_answer": "5", "before_score": 0.0, "after_score": 1.0, "tags": ["format_improved", "answer_extractable"], "notes": "", "timestamp": "2026-06-06T12:32:06.568738+00:00"}

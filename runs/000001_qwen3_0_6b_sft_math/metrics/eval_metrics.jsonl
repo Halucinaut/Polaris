@@ -1,0 +1,2 @@
+{"step": 1, "split": "eval", "metrics": {"format_adherence": 0.4, "answer_extraction_success": 0.35}, "timestamp": "2026-06-06T12:32:06.568623+00:00"}
+{"step": 2, "split": "eval", "metrics": {"format_adherence": 0.55, "answer_extraction_success": 0.48}, "timestamp": "2026-06-06T12:32:06.568699+00:00"}

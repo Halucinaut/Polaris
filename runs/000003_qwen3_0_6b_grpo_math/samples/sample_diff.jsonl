@@ -1,0 +1,1 @@
+{"sample_id": "grpo_000001", "prompt": "Solve: What is 12 / 4?", "before": "3", "after": "<think>12 / 4 = 3</think>\n\n3", "reference_answer": "3", "before_score": 0.0, "after_score": 1.0, "tags": ["reward_gain", "kl_within_range"], "notes": "", "timestamp": "2026-06-06T12:32:06.644047+00:00"}

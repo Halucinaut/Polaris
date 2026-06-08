@@ -1,0 +1,2 @@
+{"step": 1, "split": "train", "metrics": {"chosen_logprob": -1.2, "rejected_logprob": -1.45, "logprob_margin": 0.25}, "timestamp": "2026-06-06T12:32:06.607496+00:00"}
+{"step": 2, "split": "train", "metrics": {"chosen_logprob": -1.1, "rejected_logprob": -1.5, "logprob_margin": 0.4}, "timestamp": "2026-06-06T12:32:06.607616+00:00"}

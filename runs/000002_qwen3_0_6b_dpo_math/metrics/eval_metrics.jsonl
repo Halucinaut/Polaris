@@ -1,0 +1,2 @@
+{"step": 1, "split": "eval", "metrics": {"preference_accuracy": 0.52, "response_length_shift": 12.0}, "timestamp": "2026-06-06T12:32:06.607673+00:00"}
+{"step": 2, "split": "eval", "metrics": {"preference_accuracy": 0.58, "response_length_shift": 18.0}, "timestamp": "2026-06-06T12:32:06.607745+00:00"}

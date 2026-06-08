@@ -1,0 +1,1 @@
+{"sample_id": "ppo_000001", "prompt": "Solve: What is 9 + 6?", "before": "15", "after": "<think>9 + 6 = 15</think>\n\n15", "reference_answer": "15", "before_score": 0.0, "after_score": 1.0, "tags": ["rollout_ok", "reward_ok", "kl_logged", "checkpoint_ok", "resume_ok"], "notes": "", "timestamp": "2026-06-06T12:32:06.685859+00:00"}
