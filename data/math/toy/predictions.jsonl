@@ -1,0 +1,12 @@
+{"problem_id":"toy_001","prediction":"<think>\n2 + 3 = 5.\n</think>\n\n\\boxed{5}"}
+{"problem_id":"toy_002","prediction":"<think>\n1/2 + 1/4 = 2/4 + 1/4 = 3/4.\n</think>\n\n\\boxed{3/4}"}
+{"problem_id":"toy_003","prediction":"<think>\nx + 7 = 10, so x = 3.\n</think>\n\n<answer>x=3</answer>"}
+{"problem_id":"toy_004","prediction":"<think>\n0.2 + 0.3 = 0.5.\n</think>\n\n0.5"}
+{"problem_id":"toy_005","prediction":"<think>\n6 * 7 = 42.\n</think>\n\n\\boxed{41}"}
+{"problem_id":"toy_006","prediction":"9 - 4 = 5.\n\\boxed{5}"}
+{"problem_id":"toy_007","prediction":"<think>\nThe square root of 16 is \\boxed{4}.\n</think>\n\nThe answer is 4."}
+{"problem_id":"toy_008","prediction":"<think>\n2/4 simplifies to 1/2.\n</think>\n\n\\boxed{0.5}"}
+{"problem_id":"toy_009","prediction":"<think>\n3^2 = 9.\n</think>\n\nThe answer is nine."}
+{"problem_id":"toy_010","prediction":"<think>\n10 / 4 = 2.5.\n</think>\n\n\\boxed{2.5}"}
+{"problem_id":"toy_011","prediction":"<think>\n2x = 8, so x = 4.\n</think>\n\n<answer>x=4</answer>"}
+{"problem_id":"toy_012","prediction":"<think>\n100 - 1 = 99.\n</think>\n\n\\boxed{99}"}

@@ -1,46 +1,42 @@
 #!/usr/bin/env python3
 """
 Download Qwen3-0.6B metadata files from HuggingFace without downloading model weights.
+
+Usage:
+    python scripts/download/download_qwen3_metadata.py
+    HF_ENDPOINT=https://huggingface.co python scripts/download/download_qwen3_metadata.py  # use official source
 """
 
 import os
 import sys
 from pathlib import Path
-from huggingface_hub import hf_hub_download, list_repo_files
+from huggingface_hub import hf_hub_download
 
 REPO_ID = "Qwen/Qwen3-0.6B"
 TARGET_DIR = Path(__file__).resolve().parents[2] / "models" / "qwen3_0_6b" / "metadata"
 
 # Files to download (metadata/config only, NO weights)
+# Must match the official Qwen/Qwen3-0.6B repo (excluding .safetensors)
 METADATA_FILES = [
     "config.json",
     "generation_config.json",
     "tokenizer.json",
     "tokenizer_config.json",
-    "special_tokens_map.json",
-    "added_tokens.json",
-    "chat_template.jinja",
+    "vocab.json",
+    "merges.txt",
+    "LICENSE",
     "README.md",
+    ".gitattributes",
 ]
 
 
 def download_metadata():
     TARGET_DIR.mkdir(parents=True, exist_ok=True)
 
+    endpoint = os.environ.get("HF_ENDPOINT", "https://hf-mirror.com")
     print(f"Target directory: {TARGET_DIR}")
     print(f"Repository: {REPO_ID}")
-    print("-" * 50)
-
-    # List all files in repo to show what we're skipping
-    all_files = list(list_repo_files(REPO_ID))
-    weight_files = [f for f in all_files if any(
-        f.endswith(ext) for ext in [".safetensors", ".bin", ".pt", ".ckpt", ".msgpack"]
-    )]
-
-    print(f"Total files in repo: {len(all_files)}")
-    print(f"Weight files detected (SKIPPED): {len(weight_files)}")
-    for wf in weight_files:
-        print(f"  - {wf}")
+    print(f"Endpoint: {endpoint}")
     print("-" * 50)
 
     success = []
@@ -52,7 +48,7 @@ def download_metadata():
                 repo_id=REPO_ID,
                 filename=filename,
                 local_dir=TARGET_DIR,
-                local_dir_use_symlinks=False,
+                endpoint=endpoint,
             )
             print(f"[OK] {filename}")
             success.append(filename)

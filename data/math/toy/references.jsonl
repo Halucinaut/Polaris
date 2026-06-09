@@ -1,0 +1,12 @@
+{"problem_id":"toy_001","problem":"What is 2 + 3?","answer":"5","level":1,"source":"toy","domain":"arithmetic"}
+{"problem_id":"toy_002","problem":"What is 1/2 + 1/4?","answer":"3/4","level":1,"source":"toy","domain":"arithmetic"}
+{"problem_id":"toy_003","problem":"Solve x + 7 = 10.","answer":"x=3","level":1,"source":"toy","domain":"algebra"}
+{"problem_id":"toy_004","problem":"What is 0.2 + 0.3?","answer":"0.5","level":1,"source":"toy","domain":"arithmetic"}
+{"problem_id":"toy_005","problem":"What is 6 * 7?","answer":"42","level":1,"source":"toy","domain":"arithmetic"}
+{"problem_id":"toy_006","problem":"What is 9 - 4?","answer":"5","level":1,"source":"toy","domain":"arithmetic"}
+{"problem_id":"toy_007","problem":"What is the square root of 16?","answer":"4","level":1,"source":"toy","domain":"arithmetic"}
+{"problem_id":"toy_008","problem":"Simplify 2/4.","answer":"1/2","level":1,"source":"toy","domain":"arithmetic"}
+{"problem_id":"toy_009","problem":"What is 3^2?","answer":"9","level":1,"source":"toy","domain":"arithmetic"}
+{"problem_id":"toy_010","problem":"What is 10 / 4 as a decimal?","answer":"2.5","level":1,"source":"toy","domain":"arithmetic"}
+{"problem_id":"toy_011","problem":"Solve 2x = 8.","answer":"x=4","level":1,"source":"toy","domain":"algebra"}
+{"problem_id":"toy_012","problem":"What is 100 - 1?","answer":"99","level":1,"source":"toy","domain":"arithmetic"}
