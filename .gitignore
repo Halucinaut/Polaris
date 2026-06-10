@@ -12,3 +12,23 @@ dist/
 
 # Data
 *.jsonl
+*.csv
+*.parquet
+*.tsv
+
+# Run artifacts are tracked (override data ignore)
+!runs/**/*.jsonl
+
+# Model weights
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.gguf
+*.ckpt
+*.msgpack
+models/**/mlx/
+models/**/weights/
+
+# Smoke / temporary results
+gsm8k_smoke_result.json

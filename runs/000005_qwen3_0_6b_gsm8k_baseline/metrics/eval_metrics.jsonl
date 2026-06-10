@@ -1,0 +1,2 @@
+{"step": 0, "phase": "baseline", "dataset": "gsm8k", "split": "test", "num_samples": 30, "pass_at_1": 0.6, "answer_extraction_success": 1.0, "format_adherence": null, "invalid_output_rate": 0.0, "avg_completion_length": 582.43, "dominant_failure_type": "calculation_error"}
+{"step": 0, "phase": "baseline_review", "dataset": "gsm8k", "split": "review", "num_samples": 30, "pass_at_1": 0.6, "answer_extraction_success": 1.0, "format_adherence": null, "invalid_output_rate": 0.0, "avg_completion_length": 533.53, "dominant_failure_type": "calculation_error"}

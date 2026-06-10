@@ -97,6 +97,14 @@ def extract_answer_tag(text: str) -> Optional[str]:
     return None
 
 
+def extract_hash_answer(text: str) -> Optional[str]:
+    """Extract content after #### marker."""
+    match = re.search(r"####\s*(.+)", text)
+    if match:
+        return match.group(1).strip()
+    return None
+
+
 def extract_numeric_fallback(text: str) -> Optional[str]:
     """
     Fallback: extract the last standalone numeric token in the text.
@@ -128,6 +136,11 @@ def extract_predicted_answer(prediction: str) -> tuple[Optional[str], str]:
     ans = extract_answer_tag(post_think)
     if ans is not None:
         return ans, "answer_tag"
+
+    # Try #### marker
+    ans = extract_hash_answer(post_think)
+    if ans is not None:
+        return ans, "hash_answer"
 
     # Numeric fallback
     ans = extract_numeric_fallback(post_think)

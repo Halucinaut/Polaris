@@ -1,0 +1,10 @@
+run_id: 000005_qwen3_0_6b_gsm8k_baseline
+run_name: qwen3_0_6b_gsm8k_baseline
+status: completed
+created_at: '2026-06-10T10:25:14.222038+00:00'
+updated_at: '2026-06-10T10:27:21.096320+00:00'
+config_path: runs/000005_qwen3_0_6b_gsm8k_baseline/config.yaml
+tags:
+  domain: gsm8k
+  model_size: 6b
+notes: ''
