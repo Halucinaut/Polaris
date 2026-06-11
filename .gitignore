@@ -18,7 +18,7 @@ dist/
 
 # Run artifacts are tracked (override data ignore)
 !runs/**/*.jsonl
-
+runs/
 # Model weights
 *.safetensors
 *.bin

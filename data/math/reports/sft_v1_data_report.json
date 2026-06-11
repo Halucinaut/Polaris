@@ -1,0 +1,20 @@
+{
+  "num_samples": 300,
+  "format_valid_rate": 1.0,
+  "answer_extraction_success_rate": 1.0,
+  "avg_problem_chars": 228.0,
+  "avg_solution_chars": 234.0,
+  "avg_target_chars": 263.3,
+  "max_target_chars": 729,
+  "split_distribution": {
+    "train": 210,
+    "val": 30,
+    "test": 30,
+    "review": 30
+  },
+  "source_distribution": {
+    "gsm8k": 300
+  },
+  "invalid_samples_count": 0,
+  "examples_of_invalid_samples": []
+}

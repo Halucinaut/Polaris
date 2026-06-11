@@ -4,12 +4,12 @@ run:
 
 model:
   name: "Qwen3-0.6B"
-  path: "Qwen/Qwen3-0.6B"
+  path: "models/qwen3_0_6b/mlx"
 
 data:
-  name: "openr1_math_subset"
-  path: "data/math/splits/openr1_math_5k.jsonl"
-  max_samples: 5000
+  name: "gsm8k_sft"
+  path: "data/math/splits/sft_v1.jsonl"
+  max_samples: null
 
 training:
   method: "sft"

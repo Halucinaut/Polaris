@@ -24,7 +24,7 @@ import yaml
 
 from polaris.config import build_config, freeze_config
 
-VALID_STATUSES = {"created", "running", "completed", "failed", "aborted"}
+VALID_STATUSES = {"created", "running", "completed", "completed_with_warnings", "failed", "aborted"}
 
 RUN_SUBDIRS = ["metrics", "samples", "checkpoints", "logs"]
 
