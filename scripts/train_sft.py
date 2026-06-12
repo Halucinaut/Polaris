@@ -12,8 +12,10 @@ Exits 0 on success, 1 on handled failure (run marked failed via registry).
 from __future__ import annotations
 
 import argparse
+import atexit
 import json
 import math
+import os
 import re
 import sys
 import time
@@ -48,7 +50,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--config", type=Path,
                    default=Path("configs/qwen3_0_6b/sft_math.yaml"),
                    help="Experiment config YAML (merged with configs/base.yaml)")
-    p.add_argument("--max-steps", type=int, default=10,
+    p.add_argument("--max-steps", type=int, default=None,
                    help="Override max training steps")
     p.add_argument("--base-config", type=Path,
                    default=Path("configs/base.yaml"),
@@ -60,6 +62,33 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--debug-dump-path", type=Path, default=None,
                    help="Debug dump output path (default: runs/{run}/logs/debug_batch.json)")
     return p.parse_args()
+
+
+def acquire_training_lock(runs_dir: str) -> Path:
+    """Prevent concurrent MLX SFT runs from exhausting unified memory."""
+    lock_path = Path(runs_dir) / ".train_sft.lock"
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    except FileExistsError as exc:
+        existing = lock_path.read_text(encoding="utf-8", errors="replace").strip()
+        raise RuntimeError(
+            f"Another train_sft.py run appears to be active: {lock_path} {existing}. "
+            "Remove the lock only after confirming no SFT process is running."
+        ) from exc
+
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        f.write(f"pid={os.getpid()}\n")
+        f.write(f"created_at={time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+
+    def _release() -> None:
+        try:
+            lock_path.unlink(missing_ok=True)
+        except Exception:
+            pass
+
+    atexit.register(_release)
+    return lock_path
 
 
 # ---------------------------------------------------------------------------
@@ -869,13 +898,14 @@ def write_diagnosis(run_dir: Path, warnings: list[str]) -> None:
 
 def main() -> int:
     args = parse_args()
+    lock_path = acquire_training_lock(args.runs_dir)
+    print(f"Training lock acquired: {lock_path}")
+
     config = build_config(str(args.base_config), str(args.config))
 
     if args.max_steps is not None:
         config.setdefault("training", {})["max_steps"] = args.max_steps
     max_steps = config.get("training", {}).get("max_steps")
-    if max_steps is None:
-        max_steps = config["training"]["num_epochs"] * 1000
 
     # --- Create run via registry ---
     merged_tmp = Path("__tmp_merged_config.yaml")
@@ -936,7 +966,7 @@ def main() -> int:
 def _run_training(
     config: dict,
     run_dir: Path,
-    max_steps: int,
+    max_steps: int | None,
     runs_dir: str,
     debug_dump: bool = False,
     debug_dump_path: Path | None = None,
@@ -1019,6 +1049,9 @@ def _run_training(
     # ------ Load dataset ------
     print(f"\nLoading dataset: {data_path} ...")
     raw_data = load_sft_dataset(data_path)
+    max_samples = data_cfg.get("max_samples")
+    if max_samples is not None:
+        raw_data = raw_data[:int(max_samples)]
     raw_data_map = {item.get("metadata", {}).get("problem_id", ""): item for item in raw_data}
     n_samples = len(raw_data)
     print(f"  {n_samples} samples loaded")
@@ -1070,7 +1103,11 @@ def _run_training(
     optimizer = optim.Adam(learning_rate=lr)
 
     # ------ Train loop ------
-    effective_steps = min(max_steps, len(tokenized) // batch_size) if len(tokenized) >= batch_size else max_steps
+    steps_per_epoch = max(1, len(tokenized) // batch_size) if tokenized else 0
+    if max_steps is None:
+        effective_steps = int(train_cfg.get("num_epochs", 1)) * steps_per_epoch
+    else:
+        effective_steps = max_steps
     print(f"\nStarting training: {effective_steps} steps (batch_size={batch_size}, "
           f"grad_accum={grad_accum}, lr={lr})")
     print("=" * 60)
@@ -1111,6 +1148,7 @@ def _run_training(
         grad_norm = _grad_norm(accumulated_grads)
         optimizer.update(model, accumulated_grads)
         mx.eval(model.parameters(), optimizer.state)
+        mx.clear_cache()
 
         step_losses.append(avg_loss)
         append_metric(run_dir, "train", step=step,

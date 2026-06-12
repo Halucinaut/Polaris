@@ -1,14 +1,14 @@
 run:
-  name: "qwen3_0_6b_sft_math"
-  tags: ["sft", "math", "0.6b"]
+  name: "qwen3_0_6b_sft_gsm8k_500"
+  tags: ["sft", "math", "0.6b", "d5", "gsm8k-500"]
 
 model:
   name: "Qwen3-0.6B"
   path: "models/qwen3_0_6b/mlx"
 
 data:
-  name: "gsm8k_sft"
-  path: "data/math/splits/sft_v1.jsonl"
+  name: "gsm8k_sft_500"
+  path: "data/math/splits/sft_d5_500.jsonl"
   max_samples: null
 
 training:
@@ -31,6 +31,6 @@ lora:
     - "o_proj"
 
 eval:
-  dataset: "math_level_3_5"
+  dataset: "gsm8k_sft_500_sanity"
   max_samples: 500
   metrics: ["pass@1", "format_adherence"]

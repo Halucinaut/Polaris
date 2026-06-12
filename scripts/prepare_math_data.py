@@ -97,9 +97,9 @@ def validate_target(target: str, expected_answer: str) -> dict:
 # Main pipeline
 # ---------------------------------------------------------------------------
 
-def load_samples(input_dir: Path) -> list[dict]:
+def load_samples(input_dir: Path, input_filenames: list[str] | None = None) -> list[dict]:
     samples = []
-    for fname in INPUT_FILENAMES:
+    for fname in (input_filenames or INPUT_FILENAMES):
         fpath = input_dir / fname
         if not fpath.exists():
             print(f"  [skip] {fpath} not found")
@@ -218,6 +218,8 @@ def parse_args() -> argparse.Namespace:
                    default=Path("data/math/splits/sft_v1.jsonl"))
     p.add_argument("--report", type=Path,
                    default=Path("data/math/reports/sft_v1_data_report.json"))
+    p.add_argument("--input-files", nargs="*", default=None,
+                   help="Input files under --input-dir. Defaults to all D2 converted splits.")
     return p.parse_args()
 
 
@@ -225,7 +227,7 @@ def main() -> int:
     args = parse_args()
 
     print(f"Loading samples from {args.input_dir} ...")
-    samples = load_samples(args.input_dir)
+    samples = load_samples(args.input_dir, args.input_files)
     print(f"  loaded {len(samples)} samples")
 
     if not samples:
