@@ -9,7 +9,6 @@ D3 KR2: 模型加载 smoke test 脚本。
 from __future__ import annotations
 
 import argparse
-import inspect
 import json
 import sys
 import time
@@ -18,6 +17,9 @@ from pathlib import Path
 
 from mlx_lm import generate, load
 from mlx_lm.sample_utils import make_sampler
+
+
+ASSISTANT_HEADER = "<|im_start|>assistant\n"
 
 
 def parse_args() -> argparse.Namespace:
@@ -79,19 +81,12 @@ def validate_model_path(model_path: Path) -> None:
 
 
 def apply_chat_template_safe(tokenizer, messages: list[dict]) -> str:
-    sig = inspect.signature(tokenizer.apply_chat_template)
-    kwargs: dict = {"add_generation_prompt": True}
-
-    if "enable_thinking" in sig.parameters:
-        kwargs["enable_thinking"] = False
-    else:
-        try:
-            tokenizer.apply_chat_template(messages, **kwargs, enable_thinking=False)
-            kwargs["enable_thinking"] = False
-        except TypeError:
-            pass
-
-    return tokenizer.apply_chat_template(messages, tokenize=False, **kwargs)
+    rendered = tokenizer.apply_chat_template(
+        messages,
+        tokenize=False,
+        add_generation_prompt=False,
+    )
+    return rendered + ASSISTANT_HEADER
 
 
 def run_smoke(args: argparse.Namespace) -> dict:

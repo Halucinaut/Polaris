@@ -217,6 +217,9 @@ def run_eval_math(inference_results: list[dict]) -> tuple[list[dict], dict]:
                 "predicted_answer": er.predicted_answer,
                 "is_correct": er.is_correct,
                 "extraction_method": er.extraction_method,
+                "extraction_success": er.extraction_success,
+                "format_adherence": er.format_adherence,
+                "pass": er.pass_,
                 "generation_time_sec": r["generation_time_sec"],
             })
         else:
@@ -228,6 +231,9 @@ def run_eval_math(inference_results: list[dict]) -> tuple[list[dict], dict]:
                 "predicted_answer": None,
                 "is_correct": False,
                 "extraction_method": "generation_failed",
+                "extraction_success": 0,
+                "format_adherence": 0,
+                "pass": 0,
                 "generation_time_sec": r["generation_time_sec"],
             })
 
@@ -242,6 +248,9 @@ def print_summary(dataset_name: str, metrics: dict) -> None:
     print(f"Total: {total}")
     print(f"Correct: {correct}")
     print(f"Accuracy: {accuracy:.2%}")
+    print(f"pass_at_1: {metrics['pass_at_1']:.2%}")
+    print(f"answer_extraction_success: {metrics['answer_extraction_success']:.2%}")
+    print(f"format_adherence: {metrics['format_adherence']:.2%}")
     print("Method breakdown:")
     for method, info in sorted(metrics["method_breakdown"].items(), key=lambda x: -x[1]["count"]):
         print(f"  {method}: {info['count']} (correct: {info['correct']}, acc: {info['accuracy']:.2%})")

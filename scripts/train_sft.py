@@ -40,6 +40,7 @@ SMOKE_PROMPT = "What is 2 + 3?"
 EVAL_MAX_NEW_TOKENS = 128
 EVAL_TEMPERATURE = 0.0
 DEFAULT_LORA_TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj"]
+ASSISTANT_HEADER = "<|im_start|>assistant\n"
 
 
 def parse_args() -> argparse.Namespace:
@@ -75,13 +76,19 @@ def load_sft_dataset(path: Path) -> list[dict]:
     return records
 
 
-def _strip_leading_think(token_ids: list[int]) -> list[int]:
-    """Strip leading <think>\\n from token sequence (avoid duplication with prompt)."""
-    THINK_OPEN = 151667
-    NEWLINE = 198
-    if len(token_ids) >= 2 and token_ids[0] == THINK_OPEN and token_ids[1] == NEWLINE:
-        return token_ids[2:]
-    return token_ids
+def render_m1_generation_prompt(tokenizer, messages: list[dict]) -> str:
+    """Render system/user messages and append only the assistant header."""
+    rendered = tokenizer.apply_chat_template(
+        messages,
+        tokenize=False,
+        add_generation_prompt=False,
+    )
+    return rendered + ASSISTANT_HEADER
+
+
+def build_m1_generation_prompt_ids(tokenizer, messages: list[dict]) -> list[int]:
+    """Encode the M1 prompt; continuation must generate <think> itself."""
+    return tokenizer.encode(render_m1_generation_prompt(tokenizer, messages))
 
 
 def tokenize_sample(
@@ -90,16 +97,9 @@ def tokenize_sample(
     target: str,
     max_seq_length: int,
 ) -> dict[str, list[int]] | None:
-    """Tokenize one sample. Returns None if the result is empty.
-
-    Uses enable_thinking=True so prompt ends with <think> (no empty <think></think>).
-    Strips leading <think>\\n from target to avoid duplication.
-    """
-    prompt_ids = tokenizer.apply_chat_template(
-        messages, add_generation_prompt=True, enable_thinking=True,
-    )
+    """Tokenize one sample. Returns None if the result is empty."""
+    prompt_ids = build_m1_generation_prompt_ids(tokenizer, messages)
     target_ids = tokenizer.encode(target)
-    target_ids = _strip_leading_think(target_ids)
     eos_id = tokenizer.eos_token_id
 
     full_ids = prompt_ids + target_ids + ([eos_id] if eos_id is not None else [])
@@ -358,6 +358,7 @@ def apply_lora(model, lora_cfg: dict, verbose: bool = True) -> tuple[Any, dict]:
     trainable = _count_params(model.trainable_parameters())
     lora_info = {
         "target_modules": target_modules,
+        "target_keys": sorted(target_keys),
         "matched_module_count": len(target_hits),
         "matched_modules": target_hits,
         "num_layers": num_layers,
@@ -375,6 +376,49 @@ def apply_lora(model, lora_cfg: dict, verbose: bool = True) -> tuple[Any, dict]:
         print(f"  Trainable parameters: {trainable:,}")
 
     return model, lora_info
+
+
+def save_adapter_checkpoint(
+    model,
+    ckpt_dir: Path,
+    lora_cfg: dict,
+    lora_info: dict,
+) -> dict:
+    """Save only trainable adapter weights and adapter metadata."""
+    import mlx.core as mx
+    from mlx.utils import tree_flatten
+
+    ckpt_dir.mkdir(parents=True, exist_ok=True)
+    adapter_file = ckpt_dir / "adapters.safetensors"
+    adapter_weights = dict(tree_flatten(model.trainable_parameters()))
+    mx.save_safetensors(str(adapter_file), adapter_weights)
+
+    rank = lora_cfg.get("r", 32)
+    scale = lora_cfg.get("alpha", 32) / rank
+    adapter_config = {
+        "fine_tune_type": "lora" if lora_cfg.get("enabled", True) else "none",
+        "num_layers": lora_info.get("num_layers"),
+        "target_modules": lora_info.get("target_modules", []),
+        "matched_module_count": lora_info.get("matched_module_count", 0),
+        "trainable_param_count": lora_info.get("trainable_param_count", 0),
+        "lora_parameters": {
+            "rank": rank,
+            "scale": scale,
+            "dropout": lora_cfg.get("dropout", 0.0),
+            "keys": lora_info.get("target_keys", []),
+        },
+    }
+    config_file = ckpt_dir / "adapter_config.json"
+    with config_file.open("w", encoding="utf-8") as f:
+        json.dump(adapter_config, f, indent=2, ensure_ascii=False)
+
+    return {
+        "checkpoint_type": "adapter",
+        "adapter_file": str(adapter_file),
+        "adapter_config_file": str(config_file),
+        "adapter_file_size": adapter_file.stat().st_size,
+        "adapter_tensor_count": len(adapter_weights),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -408,10 +452,7 @@ def generate_one(model, tokenizer, prompt_ids: list[int],
 
 def render_prompt(tokenizer, messages: list[dict]) -> str:
     """Render messages to prompt string for preview."""
-    prompt_ids = tokenizer.apply_chat_template(
-        messages, add_generation_prompt=True, enable_thinking=True,
-    )
-    return tokenizer.decode(prompt_ids)
+    return render_m1_generation_prompt(tokenizer, messages)
 
 
 # ---------------------------------------------------------------------------
@@ -501,14 +542,7 @@ def run_eval_protocol(
             predicted_answer, method = eval_mod.extract_predicted_answer(pred_text)
             extraction_success = 1 if predicted_answer is not None else 0
             is_correct = eval_mod.answers_match(predicted_answer, ref_answer)
-            has_think = eval_mod.has_think_block(pred_text)
-            post_think = eval_mod.get_post_think_text(pred_text)
-            has_final = bool(
-                eval_mod.extract_boxed_answer(post_think)
-                or eval_mod.extract_answer_tag(post_think)
-                or eval_mod.extract_numeric_fallback(post_think)
-            )
-            fa = 1 if (has_think and has_final) else 0
+            fa = 1 if eval_mod.has_m1_format_adherence(pred_text) else 0
         else:
             has_think = bool(re.search(r"<think>.*?</think>", pred_text, re.DOTALL))
             post_think = pred_text.split("</think>")[-1] if "</think>" in pred_text else pred_text
@@ -518,7 +552,7 @@ def run_eval_protocol(
             extraction_success = 1 if predicted_answer is not None else 0
             is_correct = (predicted_answer is not None and
                           predicted_answer.strip().lower() == ref_answer.strip().lower())
-            fa = 1 if has_think else 0
+            fa = 1 if (has_think and m is not None) else 0
 
         if extraction_success:
             extraction_ok += 1
@@ -615,14 +649,7 @@ def run_sample_diff(
             predicted_answer, _ = eval_mod.extract_predicted_answer(gen_raw)
             extraction_success = 1 if predicted_answer is not None else 0
             is_correct = eval_mod.answers_match(predicted_answer, ref_answer)
-            has_think = eval_mod.has_think_block(gen_raw)
-            post_think = eval_mod.get_post_think_text(gen_raw)
-            has_final = bool(
-                eval_mod.extract_boxed_answer(post_think)
-                or eval_mod.extract_answer_tag(post_think)
-                or eval_mod.extract_numeric_fallback(post_think)
-            )
-            format_adherence = 1 if (has_think and has_final) else 0
+            format_adherence = 1 if eval_mod.has_m1_format_adherence(gen_raw) else 0
         else:
             has_think = bool(re.search(r"<think>.*?</think>", gen_raw, re.DOTALL))
             post_think = gen_raw.split("</think>")[-1] if "</think>" in gen_raw else gen_raw
@@ -631,7 +658,7 @@ def run_sample_diff(
             extraction_success = 1 if predicted_answer is not None else 0
             is_correct = (predicted_answer is not None and
                           predicted_answer.strip().lower() == ref_answer.strip().lower())
-            format_adherence = 1 if has_think else 0
+            format_adherence = 1 if (has_think and m is not None) else 0
 
         pass_ = 1 if (extraction_success and is_correct) else 0
 
@@ -673,9 +700,7 @@ def run_generation_smoke(model, tokenizer) -> dict:
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": SMOKE_PROMPT},
     ]
-    prompt_ids = tokenizer.apply_chat_template(
-        messages, add_generation_prompt=True, enable_thinking=True,
-    )
+    prompt_ids = build_m1_generation_prompt_ids(tokenizer, messages)
 
     gen = generate_one(model, tokenizer, prompt_ids,
                        max_tokens=EVAL_MAX_NEW_TOKENS, temp=EVAL_TEMPERATURE)
@@ -1105,12 +1130,13 @@ def _run_training(
 
     # ------ Save checkpoint ------
     ckpt_dir = run_dir / "checkpoints" / "final"
-    ckpt_dir.mkdir(parents=True, exist_ok=True)
-    model.save_weights(str(ckpt_dir / "model.safetensors"))
-    ckpt_size = (ckpt_dir / "model.safetensors").stat().st_size
-    print(f"Checkpoint saved: {ckpt_dir} ({ckpt_size:,} bytes)")
+    checkpoint_info = save_adapter_checkpoint(model, ckpt_dir, lora_cfg, lora_info)
+    generation_diagnostics["checkpoint"] = checkpoint_info
+    ckpt_size = checkpoint_info["adapter_file_size"]
+    print(f"Adapter checkpoint saved: {checkpoint_info['adapter_file']} ({ckpt_size:,} bytes)")
+    print(f"Adapter config saved: {checkpoint_info['adapter_config_file']}")
     if ckpt_size == 0:
-        all_warnings.append("CRITICAL: checkpoint file is empty")
+        all_warnings.append("CRITICAL: adapter checkpoint file is empty")
 
     # ------ Post-training smoke ------
     print(f"\n[Smoke] Generating after training: \"{SMOKE_PROMPT}\"")
@@ -1126,7 +1152,7 @@ def _run_training(
     reloaded_model, reloaded_tokenizer = mlx_load(model_path)
     if lora_cfg.get("enabled", True):
         reloaded_model, _ = apply_lora(reloaded_model, lora_cfg, verbose=False)
-    reloaded_model.load_weights(str(ckpt_dir / "model.safetensors"), strict=False)
+    reloaded_model.load_weights(checkpoint_info["adapter_file"], strict=False)
     mx.eval(reloaded_model.parameters())
     smoke_reloaded = run_generation_smoke(reloaded_model, reloaded_tokenizer)
     generation_diagnostics["after_reloading_checkpoint_output"] = smoke_reloaded

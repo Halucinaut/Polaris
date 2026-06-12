@@ -150,6 +150,16 @@ def extract_predicted_answer(prediction: str) -> tuple[Optional[str], str]:
     return None, "none"
 
 
+def has_m1_format_adherence(prediction: str) -> bool:
+    """Check M1 assistant continuation format: think block plus boxed answer."""
+    if "<think>" not in prediction or "</think>" not in prediction:
+        return False
+    if not has_think_block(prediction):
+        return False
+    post_think = get_post_think_text(prediction)
+    return extract_boxed_answer(post_think) is not None
+
+
 # ---------------------------------------------------------------------------
 # Answer normalization & comparison
 # ---------------------------------------------------------------------------
@@ -270,15 +280,7 @@ def evaluate(
         extraction_success = 1 if predicted_answer is not None else 0
         is_correct = answers_match(predicted_answer, ref.answer)
 
-        # Format adherence: must have <think>...</think> and a final answer after it
-        has_think = has_think_block(pred.prediction)
-        post_think = get_post_think_text(pred.prediction)
-        has_final_answer = bool(
-            extract_boxed_answer(post_think) or
-            extract_answer_tag(post_think) or
-            extract_numeric_fallback(post_think)
-        )
-        format_adherence = 1 if (has_think and has_final_answer) else 0
+        format_adherence = 1 if has_m1_format_adherence(pred.prediction) else 0
 
         pass_ = 1 if (extraction_success == 1 and is_correct) else 0
 
@@ -301,6 +303,9 @@ def compute_metrics(results: list[EvalResult]) -> dict:
     total = len(results)
     correct = sum(1 for r in results if r.is_correct)
     accuracy = correct / total if total > 0 else 0.0
+    pass_count = sum(r.pass_ for r in results)
+    extraction_count = sum(r.extraction_success for r in results)
+    format_count = sum(r.format_adherence for r in results)
 
     method_counts: dict[str, int] = {}
     method_correct: dict[str, int] = {}
@@ -318,6 +323,9 @@ def compute_metrics(results: list[EvalResult]) -> dict:
         "total": total,
         "correct": correct,
         "accuracy": accuracy,
+        "pass_at_1": pass_count / total if total > 0 else 0.0,
+        "answer_extraction_success": extraction_count / total if total > 0 else 0.0,
+        "format_adherence": format_count / total if total > 0 else 0.0,
         "method_breakdown": {
             method: {
                 "count": count,
