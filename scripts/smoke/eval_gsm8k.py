@@ -53,8 +53,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--model-path",
         type=str,
-        default="models/qwen3_0_6b_mlx",
+        default="models/qwen3_0_6b/mlx",
         help="Path to the local MLX model directory.",
+    )
+    parser.add_argument(
+        "--adapter-path",
+        type=str,
+        default=None,
+        help="Path to LoRA adapter directory (for SFT/DPO models).",
     )
     parser.add_argument(
         "--test-data",
@@ -116,7 +122,7 @@ def load_jsonl(path: Path) -> list[dict]:
 
 def generate_answer(model, tokenizer, problem: str, max_tokens: int, temperature: float) -> str:
     messages = [
-        {"role": "system", "content": "You are a helpful math assistant."},
+        {"role": "system", "content": "You are a helpful math assistant. Solve the problem and put the final answer in \\boxed{}."},
         {"role": "user", "content": problem},
     ]
     rendered = apply_chat_template_safe(tokenizer, messages)
@@ -272,7 +278,10 @@ def main() -> int:
 
     print("Loading model...")
     load_tic = time.perf_counter()
-    model, tokenizer = load(str(model_path))
+    adapter_path = args.adapter_path
+    if adapter_path:
+        print(f"  LoRA adapter: {adapter_path}")
+    model, tokenizer = load(str(model_path), adapter_path=adapter_path)
     print(f"Model loaded in {time.perf_counter() - load_tic:.2f}s\n")
 
     all_results: dict[str, list[dict]] = {}

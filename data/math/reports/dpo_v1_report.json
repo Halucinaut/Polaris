@@ -1,0 +1,29 @@
+{
+  "total_candidates": 329,
+  "kept_pairs": 329,
+  "filtered_pairs": 0,
+  "filter_breakdown": {
+    "extreme_length": 76
+  },
+  "pair_type_distribution": {
+    "gold_vs_sft_wrong": 322,
+    "gold_vs_baseline_wrong": 7
+  },
+  "quality_tag_distribution": {
+    "clean": 258,
+    "length_biased": 71
+  },
+  "chosen_avg_token_length": 78.9,
+  "rejected_avg_token_length": 84.1,
+  "avg_token_length_gap": -5.1,
+  "avg_token_length_ratio": 1.14,
+  "chosen_format_adherence": 1.0,
+  "rejected_format_adherence": 0.967,
+  "chosen_answer_correct_rate": 1.0,
+  "rejected_answer_correct_rate": 0.0,
+  "truncation_filtered_count": 0,
+  "extreme_length_gap_count": 76,
+  "same_answer_pair_count": 0,
+  "sft_regression_pool_count": 0,
+  "notes": ""
+}
