@@ -4,22 +4,33 @@ run:
 
 model:
   name: "Qwen3-0.6B"
-  path: "Qwen/Qwen3-0.6B"
+  path: "models/qwen3_0_6b/mlx"
 
 data:
-  name: "openr1_math_dpo_pairs"
-  path: "data/math/splits/dpo_pairs_5k.jsonl"
-  max_samples: 5000
+  name: "gsm8k_dpo_v1"
+  path: "data/math/splits/dpo_v1.jsonl"
+  max_samples: null
 
 training:
   method: "dpo"
-  num_epochs: 2
+  num_epochs: 1
   batch_size: 2
-  gradient_accumulation_steps: 8
-  learning_rate: 5.0e-6
+  gradient_accumulation_steps: 4
+  learning_rate: 5.0e-7
   max_seq_length: 2048
+  seed: 42
 
-eval:
-  dataset: "math_level_3_5"
-  max_samples: 500
-  metrics: ["preference_accuracy", "response_length_shift"]
+dpo:
+  beta: 0.1
+  ref_checkpoint: "models/qwen3_0_6b/mlx"
+
+lora:
+  enabled: true
+  r: 32
+  alpha: 32
+  dropout: 0.0
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
