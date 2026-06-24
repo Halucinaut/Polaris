@@ -1,4 +1,7 @@
-.PHONY: config-check create-run sanity-sft sanity-dpo sanity-grpo sanity-rl sanity-all list-runs
+.PHONY: test config-check create-run sanity-sft sanity-dpo sanity-grpo sanity-rl sanity-all list-runs
+
+test:
+	python -m unittest discover -s tests -v
 
 config-check:
 	python -m polaris.config --base configs/base.yaml --override configs/qwen3_0_6b/sft_math.yaml --print

@@ -50,6 +50,7 @@ polaris/                    # 项目根
 Polaris M0 validates the local experiment skeleton only. It does not download models, run training, or require MLX/PyTorch.
 
 ```bash
+make test
 make config-check
 make sanity-all
 make list-runs
@@ -77,6 +78,7 @@ run_report.md
 
 | Target | Description |
 |---|---|
+| `make test` | Run the regression test suite |
 | `make config-check` | Print merged config (base + override) |
 | `make create-run` | Create a single run from config |
 | `make sanity-sft` | Run SFT fake sanity |
@@ -97,4 +99,3 @@ head runs/<run_id>/metrics/eval_metrics.jsonl
 head runs/<run_id>/metrics/hardware_log.jsonl
 head runs/<run_id>/samples/sample_diff.jsonl
 ```
-
