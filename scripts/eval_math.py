@@ -166,7 +166,7 @@ def has_m1_format_adherence(prediction: str) -> bool:
 
 def normalize_answer(answer: str) -> str:
     """Normalize an answer string for comparison."""
-    return answer.strip().lower().replace(" ", "")
+    return answer.strip().lower().replace(",", "").replace(" ", "")
 
 
 def parse_numeric(answer: str) -> Optional[Fraction]:
