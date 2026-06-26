@@ -83,9 +83,25 @@ def extract_think_content(text: str) -> Optional[str]:
 
 def extract_boxed_answer(text: str) -> Optional[str]:
     """Extract content from \\boxed{...}."""
-    match = re.search(r"\\boxed\{(.*?)\}", text)
-    if match:
-        return match.group(1)
+    marker = r"\boxed{"
+    start = text.find(marker)
+    if start == -1:
+        return None
+
+    idx = start + len(marker)
+    depth = 1
+    chars = []
+    while idx < len(text):
+        char = text[idx]
+        if char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return "".join(chars).strip()
+        chars.append(char)
+        idx += 1
+
     return None
 
 
@@ -166,7 +182,8 @@ def has_m1_format_adherence(prediction: str) -> bool:
 
 def normalize_answer(answer: str) -> str:
     """Normalize an answer string for comparison."""
-    return answer.strip().lower().replace(",", "").replace(" ", "")
+    normalized = answer.strip().lower().replace(",", "").replace(" ", "")
+    return re.sub(r"\\(?:d?frac)\{([^{}]+)\}\{([^{}]+)\}", r"\1/\2", normalized)
 
 
 def parse_numeric(answer: str) -> Optional[Fraction]:

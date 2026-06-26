@@ -16,6 +16,18 @@ class EvalMathTests(unittest.TestCase):
         self.assertTrue(answers_match("2/4", "1/2"))
         self.assertFalse(answers_match("2/3", "1/2"))
 
+    def test_answers_match_accepts_latex_fractions(self):
+        self.assertTrue(answers_match("\\frac{2}{4}", "1/2"))
+        self.assertTrue(answers_match("\\dfrac{3}{6}", "1/2"))
+
+    def test_extract_predicted_answer_handles_nested_boxed_braces(self):
+        prediction = "<think>Work</think>\n\\boxed{\\frac{1}{2}}"
+
+        self.assertEqual(
+            extract_predicted_answer(prediction),
+            ("\\frac{1}{2}", "boxed"),
+        )
+
     def test_extract_predicted_answer_uses_post_think_answer(self):
         prediction = (
             "<think>The intermediate result is \\boxed{7}.</think>\n"
