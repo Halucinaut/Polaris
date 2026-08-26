@@ -17,8 +17,13 @@ import traceback
 from pathlib import Path
 from typing import Optional
 
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
 from mlx_lm import generate, load
 from mlx_lm.sample_utils import make_sampler
+from polaris.eval_paths import prepare_output_path
+from scripts.smoke.eval_utils import select_eval_datasets
 
 
 def _load_module(name: str, path: Path):
@@ -29,7 +34,6 @@ def _load_module(name: str, path: Path):
 
 
 # 动态导入项目内的模块
-PROJECT_ROOT = Path(__file__).parent.parent.parent
 scripts_dir = PROJECT_ROOT / "scripts"
 smoke_dir = scripts_dir / "smoke"
 
@@ -97,6 +101,12 @@ def parse_args() -> argparse.Namespace:
         type=str,
         default=None,
         help="Optional JSON path to save detailed results.",
+    )
+    parser.add_argument(
+        "--skip-review",
+        action="store_true",
+        default=False,
+        help="Skip review dataset; only evaluate --test-data.",
     )
     return parser.parse_args()
 
@@ -286,7 +296,11 @@ def main() -> int:
 
     all_results: dict[str, list[dict]] = {}
 
-    for label, data_path_str in [("test", args.test_data), ("review", args.review_data)]:
+    output_path = prepare_output_path(args.output_path)
+
+    datasets = select_eval_datasets(args.test_data, args.review_data, args.skip_review)
+
+    for label, data_path_str in datasets:
         data_path = Path(data_path_str)
         if not data_path.exists():
             print(f"Warning: {data_path} not found, skipping.")
@@ -311,9 +325,8 @@ def main() -> int:
         print_summary(label, metrics)
 
         # Optionally save predictions.jsonl alongside the main output
-        if args.output_path:
-            out_dir = Path(args.output_path).parent
-            pred_path = out_dir / f"{label}_predictions.jsonl"
+        if output_path:
+            pred_path = output_path.parent / f"{label}_predictions.jsonl"
             with pred_path.open("w", encoding="utf-8") as f:
                 for r in inference_results:
                     f.write(
@@ -334,9 +347,7 @@ def main() -> int:
         print(f"Correct: {correct_all}")
         print(f"Accuracy: {correct_all / total_all:.2%}")
 
-    if args.output_path:
-        output_path = Path(args.output_path)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
+    if output_path:
         with output_path.open("w", encoding="utf-8") as f:
             json.dump(all_results, f, ensure_ascii=False, indent=2)
         print(f"\nDetailed results saved to: {output_path}")
