@@ -1,0 +1,13 @@
+{
+  "input_path": "data/math/splits/dpo_v2_style_train_449.jsonl",
+  "input_sha256": "4f39569e2a183d891775000c0f065217eee7bb27555107f224a29626a2cda2d7",
+  "output_path": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+  "output_sha256": "c8b2ff5fae63ef0608bd830ca4107c2ef3cd40fea75e02df4a0f1c903433c55d",
+  "record_count": 449,
+  "target_length_stats": {
+    "min": 124,
+    "max": 515,
+    "mean": 253.7,
+    "median": 243
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "input_path": "data/math/splits/dpo_v2_style_train_449.jsonl",
+  "input_sha256": "4f39569e2a183d891775000c0f065217eee7bb27555107f224a29626a2cda2d7",
+  "output_path": "data/math/probes/dpo_v2_style_train_probe_30.jsonl",
+  "output_sha256": "21c1fc97f432896a5bb2ae10bd5402841aad0cdfe73727299f4f9720ade2181c",
+  "per_bin": {
+    "short": {
+      "count": 10,
+      "selected_ids": [
+        "gsm8k_train_d5_0009",
+        "gsm8k_train_d5_0286",
+        "gsm8k_train_d5_0380",
+        "gsm8k_train_d5_0239",
+        "gsm8k_train_d5_0323",
+        "gsm8k_train_d5_0017",
+        "gsm8k_train_d5_0436",
+        "gsm8k_train_d5_0439",
+        "gsm8k_train_d5_0453",
+        "gsm8k_train_d5_0093"
+      ]
+    },
+    "balanced": {
+      "count": 10,
+      "selected_ids": [
+        "gsm8k_train_d5_0128",
+        "gsm8k_train_d5_0091",
+        "gsm8k_train_d5_0037",
+        "gsm8k_train_d5_0049",
+        "gsm8k_train_d5_0007",
+        "gsm8k_train_d5_0175",
+        "gsm8k_train_d5_0315",
+        "gsm8k_train_d5_0085",
+        "gsm8k_train_d5_0471",
+        "gsm8k_train_d5_0178"
+      ]
+    },
+    "long": {
+      "count": 10,
+      "selected_ids": [
+        "gsm8k_train_d5_0268",
+        "gsm8k_train_d5_0244",
+        "gsm8k_train_d5_0039",
+        "gsm8k_train_d5_0322",
+        "gsm8k_train_d5_0028",
+        "gsm8k_train_d5_0331",
+        "gsm8k_train_d5_0387",
+        "gsm8k_train_d5_0485",
+        "gsm8k_train_d5_0048",
+        "gsm8k_train_d5_0255"
+      ]
+    }
+  },
+  "total": 30
+}
