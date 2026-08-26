@@ -1,0 +1,27 @@
+run:
+  name: "qwen3_0_6b_sft_boundary_only_ctrl"
+  tags: ["sft", "math", "0.6b", "boundary", "control"]
+
+model:
+  path: models/qwen3_0_6b/mlx
+
+data:
+  path: data/math/pilots/boundary_only_sft_480.jsonl
+
+sft:
+  init_adapter_path: runs/000030_qwen3_0_6b_sft_gsm8k_500/checkpoints/final
+
+training:
+  method: sft
+  num_epochs: 1
+  batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 5.0e-5
+  max_seq_length: 2048
+  seed: 42
+
+lora:
+  enabled: true
+  r: 32
+  alpha: 32
+  target_modules: [q_proj, k_proj, v_proj, o_proj]

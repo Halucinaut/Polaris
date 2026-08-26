@@ -1,0 +1,38 @@
+run:
+  name: "qwen3_0_6b_dpo_v4_style_minimal"
+  tags: ["dpo", "math", "0.6b", "v4", "style", "minimal"]
+
+model:
+  name: "Qwen3-0.6B"
+  path: "models/qwen3_0_6b/mlx"
+
+data:
+  name: "dpo_v4_minimal_449"
+  path: "data/math/pilots/dpo_v4_minimal_449.jsonl"
+  max_samples: null
+
+training:
+  method: "dpo"
+  num_epochs: 1
+  batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 5.0e-7
+  max_seq_length: 2048
+  seed: 42
+
+dpo:
+  beta: 0.1
+  policy_adapter_path: "runs/000030_qwen3_0_6b_sft_gsm8k_500/checkpoints/final"
+  ref_model_path: "models/qwen3_0_6b/mlx"
+  ref_adapter_path: "runs/000030_qwen3_0_6b_sft_gsm8k_500/checkpoints/final"
+
+lora:
+  enabled: true
+  r: 32
+  alpha: 32
+  dropout: 0.0
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
