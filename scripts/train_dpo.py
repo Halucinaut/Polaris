@@ -31,6 +31,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import yaml
 
 from polaris.config import build_config, freeze_config
+from polaris.json_records import load_json_record_stream
 from polaris.monitoring.hardware import snapshot_hardware, append_hardware_log
 from polaris.monitoring.metrics import append_metric
 from polaris.registry import create_run, update_run_status
@@ -60,10 +61,16 @@ def parse_args() -> argparse.Namespace:
                    help="Experiment config YAML")
     p.add_argument("--data-path", type=Path, default=None,
                    help="Override DPO data path (dpo_v1.jsonl)")
-    p.add_argument("--policy-checkpoint", type=str, default=None,
-                   help="Path to policy model or adapter checkpoint")
-    p.add_argument("--ref-checkpoint", type=str, default=None,
-                   help="Path to reference model or adapter checkpoint")
+    p.add_argument("--policy-adapter-path", type=Path, default=None,
+                   help="Override the initial policy LoRA adapter directory or safetensors file")
+    p.add_argument("--ref-model-path", type=Path, default=None,
+                   help="Override the frozen reference base-model directory")
+    p.add_argument("--ref-adapter-path", type=Path, default=None,
+                   help="Override the frozen reference LoRA adapter directory or safetensors file")
+    p.add_argument("--policy-checkpoint", type=Path, default=None,
+                   help="Deprecated alias for --policy-adapter-path")
+    p.add_argument("--ref-checkpoint", type=Path, default=None,
+                   help="Deprecated alias for --ref-adapter-path")
     p.add_argument("--max-steps", type=int, default=None,
                    help="Override max training steps")
     p.add_argument("--output-run-dir", type=str, default=None,
@@ -115,13 +122,40 @@ def acquire_training_lock(runs_dir: str) -> Path:
 # ---------------------------------------------------------------------------
 
 def load_dpo_dataset(path: Path) -> list[dict]:
-    records = []
-    with open(path, encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                records.append(json.loads(line))
-    return records
+    return load_json_record_stream(path)
+
+
+def build_microbatch_groups(
+    records: list[dict],
+    batch_size: int,
+    gradient_accumulation_steps: int,
+    num_epochs: int,
+    max_steps: int | None,
+) -> list[list[list[dict]]]:
+    """Create optimizer updates without silently multiplying epoch coverage.
+
+    A group contains the micro-batches whose gradients form one optimizer
+    update. The final group in an epoch may contain fewer micro-batches, so
+    every record is consumed exactly once per epoch instead of wrapping to the
+    start of the dataset.
+    """
+    if batch_size < 1 or gradient_accumulation_steps < 1 or num_epochs < 1:
+        raise ValueError("batch_size, gradient_accumulation_steps, and num_epochs must be positive")
+    if not records:
+        raise ValueError("Cannot build DPO batches from an empty dataset")
+
+    micro_batches = [records[i:i + batch_size] for i in range(0, len(records), batch_size)]
+    epoch_groups = [
+        micro_batches[i:i + gradient_accumulation_steps]
+        for i in range(0, len(micro_batches), gradient_accumulation_steps)
+    ]
+    all_groups = epoch_groups * num_epochs
+
+    if max_steps is None:
+        return all_groups
+    if max_steps < 1:
+        raise ValueError("max_steps must be positive when provided")
+    return [all_groups[i % len(all_groups)] for i in range(max_steps)]
 
 
 def render_prompt(tokenizer, messages: list[dict]) -> str:
@@ -137,18 +171,28 @@ def tokenize_pair(
     chosen: str,
     rejected: str,
     max_seq_length: int,
+    prompt_suffix: str = "",
+    no_eos: bool = False,
 ) -> dict | None:
-    """Tokenize one DPO pair. Returns None if result is empty."""
+    """Tokenize one DPO pair. Returns None if result is empty.
+
+    Args:
+        prompt_suffix: Extra text appended to prompt before tokenization.
+        no_eos: If True, do not append EOS after response (single-token supervision).
+    """
     prompt_text = render_prompt(tokenizer, messages)
     prompt_ids = tokenizer.encode(prompt_text)
+    if prompt_suffix:
+        prompt_ids = prompt_ids + tokenizer.encode(prompt_suffix)
     eos_id = tokenizer.eos_token_id
+    use_eos = (eos_id is not None) and (not no_eos)
 
     chosen_ids = tokenizer.encode(chosen)
     rejected_ids = tokenizer.encode(rejected)
 
     # Build full sequences: prompt + response + eos
-    chosen_full = prompt_ids + chosen_ids + ([eos_id] if eos_id is not None else [])
-    rejected_full = prompt_ids + rejected_ids + ([eos_id] if eos_id is not None else [])
+    chosen_full = prompt_ids + chosen_ids + ([eos_id] if use_eos else [])
+    rejected_full = prompt_ids + rejected_ids + ([eos_id] if use_eos else [])
 
     prompt_len = len(prompt_ids)
 
@@ -162,7 +206,7 @@ def tokenize_pair(
     chosen_mask = [0] * min(prompt_len, len(chosen_full)) + [1] * max(0, len(chosen_full) - prompt_len)
     rejected_mask = [0] * min(prompt_len, len(rejected_full)) + [1] * max(0, len(rejected_full) - prompt_len)
 
-    if not chosen_full or not rejected_full:
+    if not chosen_full or not rejected_full or not any(chosen_mask) or not any(rejected_mask):
         return None
 
     return {
@@ -226,7 +270,6 @@ def compute_response_logprob(logits, ids, mask):
     Uses next-token prediction: logits[:, :-1] aligns with ids[:, 1:].
     Mask is shifted accordingly: mask[:, 1:] selects response tokens.
     """
-    import mlx.core as mx
     import mlx.nn.losses as losses
 
     # Next-token alignment: predict token at position t+1 from logits at position t
@@ -242,10 +285,11 @@ def compute_response_logprob(logits, ids, mask):
     token_nll = losses.cross_entropy(flat_logits, flat_ids)  # (B*T,)
     token_nll = token_nll.reshape(B, T)
 
-    # Masked sum -> per-sample logprob
+    # DPO is defined over sequence log-probabilities. Length balance belongs
+    # in the pair-construction protocol and in the recorded diagnostics, not
+    # in an implicit change from sequence sums to token averages.
     masked_nll = token_nll * shift_mask
-    response_len = mx.maximum(shift_mask.sum(axis=1), mx.array(1.0))
-    sample_logprob = -masked_nll.sum(axis=1) / response_len  # negative because CE = -logprob
+    sample_logprob = -masked_nll.sum(axis=1)  # negative because CE = -logprob
 
     return sample_logprob
 
@@ -313,6 +357,7 @@ def build_debug_dpo_batch(
     policy_model,
     ref_model,
     beta: float,
+    checkpoint_provenance: dict,
 ) -> dict:
     """Build debug dump for one DPO sample."""
     import mlx.core as mx
@@ -335,11 +380,13 @@ def build_debug_dpo_batch(
         beta,
     )
 
-    # Shift check: verify next-token alignment
+    # Shift check: show the actual prompt/response boundary.
     shift_check = []
     full_ids = sample["chosen_ids"]
     prompt_len = sample["prompt_len"]
-    for i in range(min(len(full_ids) - 1, 20)):
+    shift_start = max(0, prompt_len - 4)
+    shift_end = min(len(full_ids) - 1, prompt_len + 16)
+    for i in range(shift_start, shift_end):
         label_pos = i + 1
         is_response = label_pos >= prompt_len
         shift_check.append({
@@ -350,18 +397,34 @@ def build_debug_dpo_batch(
             "is_response": is_response,
         })
 
+    def token_window(ids: list[int], mask: list[int]) -> list[dict]:
+        start = max(0, prompt_len - 6)
+        end = min(len(ids), prompt_len + 20)
+        return [
+            {
+                "position": pos,
+                "token_id": ids[pos],
+                "token_text": tokenizer.decode([ids[pos]]),
+                "response_mask": bool(mask[pos]),
+            }
+            for pos in range(start, end)
+        ]
+
     # Mask summary
     chosen_mask_sum = int(sum(sample["chosen_mask"]))
     rejected_mask_sum = int(sum(sample["rejected_mask"]))
 
     return {
         "sample_id": sample["metadata"].get("problem_id", ""),
+        "checkpoint_provenance": checkpoint_provenance,
         "prompt_text": prompt_text,
         "chosen_text": chosen,
         "rejected_text": rejected,
         "prompt_token_count": sample["prompt_len"],
         "chosen_token_ids": sample["chosen_ids"][:50],
         "rejected_token_ids": sample["rejected_ids"][:50],
+        "chosen_boundary_window": token_window(sample["chosen_ids"], sample["chosen_mask"]),
+        "rejected_boundary_window": token_window(sample["rejected_ids"], sample["rejected_mask"]),
         "chosen_response_mask_summary": {
             "total_tokens": len(sample["chosen_ids"]),
             "prompt_tokens": sample["prompt_len"],
@@ -383,6 +446,7 @@ def build_debug_dpo_batch(
         "shift_check_summary": {
             "uses_next_token_labels": True,
             "self_token_prediction": False,
+            "shown_input_positions": [shift_start, shift_end - 1],
         },
         "truncated": (
             len(sample["chosen_ids"]) >= 2048 or
@@ -498,6 +562,28 @@ def save_adapter_checkpoint(model, ckpt_dir: Path, lora_cfg: dict, lora_info: di
     }
 
 
+def resolve_adapter_file(adapter_path: str | Path | None) -> Path | None:
+    """Resolve an adapter directory or safetensors file to its weight file."""
+    if adapter_path is None:
+        return None
+
+    path = Path(adapter_path)
+    adapter_file = path / "adapters.safetensors" if path.is_dir() else path
+    if not adapter_file.is_file():
+        raise FileNotFoundError(f"LoRA adapter weights not found: {adapter_file}")
+    if adapter_file.suffix != ".safetensors":
+        raise ValueError(f"LoRA adapter must be a .safetensors file: {adapter_file}")
+    return adapter_file
+
+
+def load_adapter_weights(model, adapter_file: Path | None) -> str | None:
+    """Load a resolved LoRA adapter after the matching LoRA layers exist."""
+    if adapter_file is None:
+        return None
+    model.load_weights(str(adapter_file), strict=False)
+    return str(adapter_file)
+
+
 # ---------------------------------------------------------------------------
 # Metric helpers
 # ---------------------------------------------------------------------------
@@ -533,8 +619,14 @@ def main() -> int:
         config.setdefault("dpo", {})["beta"] = args.beta
     if args.data_path is not None:
         config.setdefault("data", {})["path"] = str(args.data_path)
-    if args.policy_checkpoint is not None:
-        config.setdefault("model", {})["path"] = args.policy_checkpoint
+    policy_adapter_arg = args.policy_adapter_path or args.policy_checkpoint
+    ref_adapter_arg = args.ref_adapter_path or args.ref_checkpoint
+    if policy_adapter_arg is not None:
+        config.setdefault("dpo", {})["policy_adapter_path"] = str(policy_adapter_arg)
+    if args.ref_model_path is not None:
+        config.setdefault("dpo", {})["ref_model_path"] = str(args.ref_model_path)
+    if ref_adapter_arg is not None:
+        config.setdefault("dpo", {})["ref_adapter_path"] = str(ref_adapter_arg)
 
     # Create run
     merged_tmp = Path("__tmp_merged_config.yaml")
@@ -601,8 +693,18 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
     lr = train_cfg.get("learning_rate", 5e-7)
     seed = train_cfg.get("seed", 42)
     max_steps = train_cfg.get("max_steps")
+    num_epochs = int(train_cfg.get("num_epochs", 1))
     beta = dpo_cfg.get("beta", 0.1)
-    ref_checkpoint = args.ref_checkpoint or model_path
+    ref_model_path = dpo_cfg.get("ref_model_path", model_path)
+    policy_adapter_file = resolve_adapter_file(dpo_cfg.get("policy_adapter_path"))
+    ref_adapter_file = resolve_adapter_file(dpo_cfg.get("ref_adapter_path"))
+
+    if policy_adapter_file is None:
+        raise ValueError(
+            "DPO policy_adapter_path is required. M2 must start from the validated M1 SFT adapter."
+        )
+    if (policy_adapter_file or ref_adapter_file) and not lora_cfg.get("enabled", True):
+        raise ValueError("Loading a LoRA adapter requires lora.enabled=true")
 
     mx.random.seed(seed)
 
@@ -623,18 +725,38 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
             "trainable_param_count": _count_params(policy_model.trainable_parameters()),
             "total_param_count": _count_params(policy_model.parameters()),
         }
+    loaded_policy_adapter = load_adapter_weights(policy_model, policy_adapter_file)
+    mx.eval(policy_model.parameters())
+    print(f"  Policy adapter loaded: {loaded_policy_adapter}")
 
     # ------ Load reference model (frozen) ------
-    print(f"Loading reference model: {ref_checkpoint} ...")
+    print(f"Loading reference model: {ref_model_path} ...")
     t0 = time.time()
-    ref_model, _ = mlx_load(ref_checkpoint)
-    # If ref is a different checkpoint with adapters, apply LoRA structure
-    if ref_checkpoint != model_path and lora_cfg.get("enabled", True):
+    ref_model, _ = mlx_load(ref_model_path)
+    if ref_adapter_file is not None:
         ref_model, _ = apply_lora(ref_model, lora_cfg, verbose=False)
+        loaded_ref_adapter = load_adapter_weights(ref_model, ref_adapter_file)
+        mx.eval(ref_model.parameters())
+        print(f"  Reference adapter loaded: {loaded_ref_adapter}")
+    else:
+        loaded_ref_adapter = None
     ref_model.freeze()
     ref_trainable = _count_params(ref_model.trainable_parameters())
     print(f"  Reference model loaded in {time.time() - t0:.1f}s")
     print(f"  Reference trainable params: {ref_trainable} (should be 0 after freeze)")
+
+    checkpoint_provenance = {
+        "policy_base_model_path": str(model_path),
+        "policy_adapter_file": loaded_policy_adapter,
+        "reference_base_model_path": str(ref_model_path),
+        "reference_adapter_file": loaded_ref_adapter,
+        "reference_frozen": True,
+        "response_logprob_reduction": "sum",
+    }
+    provenance_path = run_dir / "logs" / "checkpoint_provenance.json"
+    provenance_path.parent.mkdir(parents=True, exist_ok=True)
+    with provenance_path.open("w", encoding="utf-8") as f:
+        json.dump(checkpoint_provenance, f, indent=2, ensure_ascii=False)
 
     # ------ Load dataset ------
     print(f"\nLoading DPO dataset: {data_path} ...")
@@ -649,10 +771,13 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
     tokenized: list[dict] = []
     skipped = 0
     for item in raw_data:
+        prompt_suffix = item.get("prompt_suffix", "")
+        no_eos = item.get("no_eos", False)
         tk = tokenize_pair(
             tokenizer, item["messages"],
             item["chosen"], item["rejected"],
             max_seq_length,
+            prompt_suffix=prompt_suffix, no_eos=no_eos,
         )
         if tk is not None:
             tk["metadata"] = item.get("metadata", {})
@@ -667,13 +792,57 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
     if not tokenized:
         raise RuntimeError("No valid pairs after tokenization")
 
+    # ------ Boundary-only debug assertions ------
+    has_prompt_suffix = any(item.get("prompt_suffix") for item in raw_data)
+    if has_prompt_suffix:
+        print("\n[Boundary-Only] Running debug assertions ...")
+        for idx, (item, tk) in enumerate(zip(raw_data, tokenized)):
+            pid = item.get("metadata", {}).get("problem_id", f"pair_{idx}")
+            prompt_suffix = item.get("prompt_suffix", "")
+            prompt_len = tk["prompt_len"]
+
+            # 1. Prompt must end with prompt_suffix tokens
+            if prompt_suffix:
+                suffix_ids = tokenizer.encode(prompt_suffix)
+                for seq_key in ["chosen_ids", "rejected_ids"]:
+                    actual_suffix = tk[seq_key][prompt_len - len(suffix_ids):prompt_len]
+                    assert list(actual_suffix) == suffix_ids, (
+                        f"{pid}/{seq_key}: prompt does not end with prompt_suffix. "
+                        f"Expected {suffix_ids}, got {list(actual_suffix)}"
+                    )
+
+            # 2. Response mask must sum to 1 for both chosen and rejected
+            chosen_mask_sum = sum(tk["chosen_mask"])
+            rejected_mask_sum = sum(tk["rejected_mask"])
+            assert chosen_mask_sum == 1, (
+                f"{pid}: chosen_mask sum={chosen_mask_sum}, expected 1"
+            )
+            assert rejected_mask_sum == 1, (
+                f"{pid}: rejected_mask sum={rejected_mask_sum}, expected 1"
+            )
+
+            # 3. The single supervised label must be the chosen/rejected token
+            chosen_response_start = prompt_len
+            chosen_label = tk["chosen_ids"][chosen_response_start]
+            chosen_text = tokenizer.decode([chosen_label])
+            assert chosen_text == item["chosen"], (
+                f"{pid}: chosen supervised label '{chosen_text}' != '{item['chosen']}'"
+            )
+            rejected_label = tk["rejected_ids"][chosen_response_start]
+            rejected_text = tokenizer.decode([rejected_label])
+            assert rejected_text == item["rejected"], (
+                f"{pid}: rejected supervised label '{rejected_text}' != '{item['rejected']}'"
+            )
+
+        print(f"  All {len(tokenized)} boundary-only DPO assertions passed")
+
     # ------ Debug dump ------
     if args.debug_batch and tokenized:
         debug_path = run_dir / "logs" / "debug_dpo_batch.json"
         debug_path.parent.mkdir(parents=True, exist_ok=True)
         print(f"\n[Debug] Writing debug dump to {debug_path} ...")
         debug_dump = build_debug_dpo_batch(
-            tokenizer, tokenized[0], policy_model, ref_model, beta,
+            tokenizer, tokenized[0], policy_model, ref_model, beta, checkpoint_provenance,
         )
         with debug_path.open("w", encoding="utf-8") as f:
             json.dump(debug_dump, f, indent=2, ensure_ascii=False)
@@ -705,34 +874,33 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
     loss_and_grad_fn = nn.value_and_grad(policy_model, dpo_loss_fn)
 
     # ------ Train loop ------
-    if max_steps is None:
-        effective_steps = max(1, len(tokenized) // batch_size)
-    else:
-        effective_steps = max_steps
+    update_groups = build_microbatch_groups(
+        tokenized,
+        batch_size=batch_size,
+        gradient_accumulation_steps=grad_accum,
+        num_epochs=num_epochs,
+        max_steps=max_steps,
+    )
+    effective_steps = len(update_groups)
 
     print(f"\nStarting DPO training: {effective_steps} steps")
-    print(f"  batch_size={batch_size}, grad_accum={grad_accum}, lr={lr}, beta={beta}")
+    print(f"  epochs={num_epochs}, batch_size={batch_size}, grad_accum={grad_accum}, lr={lr}, beta={beta}")
     print("=" * 60)
 
     update_run_status(run_id, "running", args.runs_dir)
 
     step_metrics_list: list[dict] = []
-    data_idx = 0
+    pairs_processed = 0
     start_time = time.time()
 
     policy_model.train()
     ref_model.eval()
 
-    for step in range(1, effective_steps + 1):
+    for step, micro_batches in enumerate(update_groups, start=1):
         micro_losses: list[float] = []
         accumulated_grads = None
 
-        for _ in range(grad_accum):
-            if data_idx + batch_size > len(tokenized):
-                data_idx = 0
-            micro_batch = tokenized[data_idx:data_idx + batch_size]
-            data_idx += batch_size
-
+        for micro_batch in micro_batches:
             collated = collate_dpo_batch(micro_batch)
 
             loss, grads = loss_and_grad_fn(
@@ -751,15 +919,16 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
                 accumulated_grads = tree_map(lambda x, y: x + y, accumulated_grads, grads)
 
         avg_loss = sum(micro_losses) / len(micro_losses)
-        if grad_accum > 1:
-            accumulated_grads = tree_map(lambda x: x / grad_accum, accumulated_grads)
+        if len(micro_batches) > 1:
+            accumulated_grads = tree_map(lambda x: x / len(micro_batches), accumulated_grads)
         grad_norm = _grad_norm(accumulated_grads)
         optimizer.update(policy_model, accumulated_grads)
         mx.eval(policy_model.parameters(), optimizer.state)
         mx.clear_cache()
 
-        # Compute detailed metrics
-        collated = collate_dpo_batch(micro_batch)
+        # Compute detailed metrics on the final micro-batch in this update.
+        metric_batch = micro_batches[-1]
+        collated = collate_dpo_batch(metric_batch)
         detail = compute_dpo_loss(
             policy_model, ref_model,
             collated["chosen_ids"], collated["rejected_ids"],
@@ -767,8 +936,9 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
             beta,
         )
 
+        pairs_processed += sum(len(batch) for batch in micro_batches)
         elapsed = time.time() - start_time
-        tokens_per_sec = (step * batch_size * grad_accum * max_seq_length) / max(elapsed, 0.001)
+        tokens_per_sec = (pairs_processed * max_seq_length) / max(elapsed, 0.001)
 
         step_metrics = {
             "step": step,
@@ -781,6 +951,8 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
             "ref_logprob_margin": round(float(detail["ref_margin"].item()), 6),
             "dpo_margin": round(float(detail["dpo_margin"].item()), 6),
             "preference_accuracy": round(float(detail["preference_accuracy"].item()), 4),
+            "pairs_in_update": sum(len(batch) for batch in micro_batches),
+            "micro_batches_in_update": len(micro_batches),
             "chosen_token_length": int(collated["chosen_mask"].sum().item()),
             "rejected_token_length": int(collated["rejected_mask"].sum().item()),
             "learning_rate": lr,

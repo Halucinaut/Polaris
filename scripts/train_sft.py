@@ -28,6 +28,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import yaml
 
 from polaris.config import build_config, freeze_config
+from polaris.json_records import load_json_record_stream
 from polaris.monitoring.hardware import snapshot_hardware, append_hardware_log
 from polaris.monitoring.metrics import append_metric, append_sample_diff
 from polaris.registry import create_run, update_run_status
@@ -61,6 +62,8 @@ def parse_args() -> argparse.Namespace:
                    help="Dump first training batch to debug file")
     p.add_argument("--debug-dump-path", type=Path, default=None,
                    help="Debug dump output path (default: runs/{run}/logs/debug_batch.json)")
+    p.add_argument("--init-adapter-path", type=str, default=None,
+                   help="Override sft.init_adapter_path from config")
     return p.parse_args()
 
 
@@ -96,13 +99,8 @@ def acquire_training_lock(runs_dir: str) -> Path:
 # ---------------------------------------------------------------------------
 
 def load_sft_dataset(path: Path) -> list[dict]:
-    records = []
-    with path.open(encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                records.append(json.loads(line))
-    return records
+    """Load the SFT dataset while accepting historical record formatting."""
+    return load_json_record_stream(path)
 
 
 def render_m1_generation_prompt(tokenizer, messages: list[dict]) -> str:
@@ -125,15 +123,26 @@ def tokenize_sample(
     messages: list[dict],
     target: str,
     max_seq_length: int,
+    prompt_suffix: str = "",
+    no_eos: bool = False,
 ) -> dict[str, list[int]] | None:
-    """Tokenize one sample. Returns None if the result is empty."""
+    """Tokenize one sample. Returns None if the result is empty.
+
+    Args:
+        prompt_suffix: Extra text appended to prompt before tokenization
+                       (e.g. "<think>\\n" to place suffix inside prompt context).
+        no_eos: If True, do not append EOS after target (single-token supervision).
+    """
     prompt_ids = build_m1_generation_prompt_ids(tokenizer, messages)
+    if prompt_suffix:
+        prompt_ids = prompt_ids + tokenizer.encode(prompt_suffix)
     target_ids = tokenizer.encode(target)
     eos_id = tokenizer.eos_token_id
+    use_eos = (eos_id is not None) and (not no_eos)
 
-    full_ids = prompt_ids + target_ids + ([eos_id] if eos_id is not None else [])
+    full_ids = prompt_ids + target_ids + ([eos_id] if use_eos else [])
     prompt_len = len(prompt_ids)
-    target_len = len(target_ids) + (1 if eos_id is not None else 0)
+    target_len = len(target_ids) + (1 if use_eos else 0)
 
     if len(full_ids) > max_seq_length:
         keep = max_seq_length
@@ -269,6 +278,108 @@ def validate_debug_dump(dump: dict) -> list[str]:
         warnings.append("shift_check shorter than 80 rows")
 
     return warnings
+
+
+# ---------------------------------------------------------------------------
+# Init adapter resolution (pure functions, no MLX dependency)
+# ---------------------------------------------------------------------------
+
+def resolve_init_adapter_path(
+    config: dict, cli_override: str | None = None
+) -> str | None:
+    """Resolve init_adapter_path from CLI override and config.
+
+    CLI override takes precedence. Returns None if not configured.
+    """
+    if isinstance(cli_override, str) and cli_override.strip():
+        return cli_override.strip()
+    sft_cfg = config.get("sft", {})
+    val = sft_cfg.get("init_adapter_path")
+    if isinstance(val, str) and val.strip():
+        return val
+    return None
+
+
+def resolve_init_adapter_file(path: str) -> Path:
+    """Resolve init adapter path to an actual .safetensors file.
+
+    Accepts either:
+    - A directory containing adapters.safetensors
+    - A direct .safetensors file path
+
+    Raises FileNotFoundError if path doesn't exist.
+    Raises ValueError if file doesn't have .safetensors extension.
+    """
+    p = Path(path)
+    if p.is_dir():
+        p = p / "adapters.safetensors"
+    if not p.exists():
+        raise FileNotFoundError(f"Init adapter file not found: {p}")
+    if p.suffix != ".safetensors":
+        raise ValueError(
+            f"Init adapter must be a .safetensors file, got: {p.suffix}"
+        )
+    return p
+
+
+def build_sft_checkpoint_provenance(
+    base_model_path: str,
+    init_adapter_file: Path | None,
+    init_adapter_loaded: bool,
+) -> dict:
+    """Build checkpoint provenance metadata dict."""
+    return {
+        "base_model_path": base_model_path,
+        "init_adapter_file": str(init_adapter_file) if init_adapter_file else None,
+        "init_adapter_loaded": init_adapter_loaded,
+        "response_supervision": "target_only_next_token",
+    }
+
+
+def build_microbatch_groups(
+    n_samples: int,
+    batch_size: int,
+    grad_accum: int,
+) -> list[dict]:
+    """Pre-compute micro-batch groups for one epoch. No wrapping.
+
+    Returns a list of group dicts, each with:
+      - start: start index (inclusive)
+      - end: end index (exclusive)
+      - micro_batches: number of micro-batches in this group
+      - samples: number of samples in this group
+
+    Example: 449 samples, batch_size=2, grad_accum=4
+      → 224 micro-batches
+      → 56 full groups (8 samples each) + 1 partial group (1 sample)
+      → 57 groups total
+    """
+    if n_samples <= 0:
+        raise ValueError(f"n_samples must be positive, got {n_samples}")
+    if batch_size <= 0:
+        raise ValueError(f"batch_size must be positive, got {batch_size}")
+    if grad_accum <= 0:
+        raise ValueError(f"grad_accum must be positive, got {grad_accum}")
+
+    groups = []
+    idx = 0
+    while idx < n_samples:
+        group_start = idx
+        micro_batches = 0
+        for _ in range(grad_accum):
+            if idx >= n_samples:
+                break
+            idx += batch_size
+            micro_batches += 1
+        group_end = min(idx, n_samples)
+        if micro_batches > 0:
+            groups.append({
+                "start": group_start,
+                "end": group_end,
+                "micro_batches": micro_batches,
+                "samples": group_end - group_start,
+            })
+    return groups
 
 
 # ---------------------------------------------------------------------------
@@ -949,6 +1060,7 @@ def main() -> int:
             config, run_dir, max_steps, args.runs_dir,
             debug_dump=args.debug_dump_batch,
             debug_dump_path=debug_dump_path,
+            init_adapter_override=args.init_adapter_path,
         )
     except Exception as exc:
         _handle_failure(run_dir, exc, args.runs_dir)
@@ -970,6 +1082,7 @@ def _run_training(
     runs_dir: str,
     debug_dump: bool = False,
     debug_dump_path: Path | None = None,
+    init_adapter_override: str | None = None,
 ) -> str:
     """Core training logic. Returns status string: 'completed' or 'completed_with_warnings'."""
     run_id = run_dir.name
@@ -1037,6 +1150,26 @@ def _run_training(
         lora_info["enabled"] = True
     generation_diagnostics["lora"] = lora_info
 
+    # ------ Init adapter (M1 warm-start) ------
+    init_adapter_path = resolve_init_adapter_path(config, init_adapter_override)
+    init_adapter_loaded = False
+    init_adapter_file: Path | None = None
+    if init_adapter_path:
+        init_adapter_file = resolve_init_adapter_file(init_adapter_path)
+        print(f"\nLoading init adapter from: {init_adapter_file}")
+        model.load_weights(str(init_adapter_file), strict=False)
+        mx.eval(model.parameters())
+        init_adapter_loaded = True
+        print("  Init adapter loaded successfully")
+
+    provenance = build_sft_checkpoint_provenance(
+        model_path, init_adapter_file, init_adapter_loaded,
+    )
+    provenance_path = run_dir / "logs" / "checkpoint_provenance.json"
+    provenance_path.parent.mkdir(parents=True, exist_ok=True)
+    with provenance_path.open("w", encoding="utf-8") as f:
+        json.dump(provenance, f, indent=2, ensure_ascii=False)
+
     # ------ LoRA-injected smoke ------
     print(f"\n[Smoke] Generating before training with LoRA: \"{SMOKE_PROMPT}\"")
     smoke_before = run_generation_smoke(model, tokenizer)
@@ -1061,7 +1194,12 @@ def _run_training(
     tokenized: list[dict] = []
     skipped = 0
     for item in raw_data:
-        tk = tokenize_sample(tokenizer, item["messages"], item["target"], max_seq_length)
+        prompt_suffix = item.get("prompt_suffix", "")
+        no_eos = item.get("no_eos", False)
+        tk = tokenize_sample(
+            tokenizer, item["messages"], item["target"], max_seq_length,
+            prompt_suffix=prompt_suffix, no_eos=no_eos,
+        )
         if tk is not None:
             tk["metadata"] = item.get("metadata", {})
             tk["_raw"] = item
@@ -1071,6 +1209,41 @@ def _run_training(
     if skipped:
         print(f"  Skipped {skipped} empty samples")
     print(f"  {len(tokenized)} samples tokenized")
+
+    # ------ Boundary-only debug assertions ------
+    has_prompt_suffix = any(item.get("prompt_suffix") for item in raw_data)
+    if has_prompt_suffix:
+        print("\n[Boundary-Only] Running debug assertions ...")
+        for idx, (item, tk) in enumerate(zip(raw_data, tokenized)):
+            pid = item.get("metadata", {}).get("problem_id", f"sample_{idx}")
+            prompt_suffix = item.get("prompt_suffix", "")
+            no_eos = item.get("no_eos", False)
+            prompt_len = tk["prompt_len"]
+            target_len = tk["target_len"]
+            input_ids = tk["input_ids"]
+
+            # 1. Prompt must end with prompt_suffix tokens
+            if prompt_suffix:
+                suffix_ids = tokenizer.encode(prompt_suffix)
+                actual_suffix = input_ids[prompt_len - len(suffix_ids):prompt_len]
+                assert list(actual_suffix) == suffix_ids, (
+                    f"{pid}: prompt does not end with prompt_suffix tokens. "
+                    f"Expected {suffix_ids}, got {list(actual_suffix)}"
+                )
+
+            # 2. Target must be exactly 1 token (no EOS)
+            assert target_len == 1, (
+                f"{pid}: expected target_len=1, got {target_len}"
+            )
+
+            # 3. Supervised label must equal the target token
+            target_token_id = input_ids[prompt_len]
+            target_text = tokenizer.decode([target_token_id])
+            assert target_text == item["target"], (
+                f"{pid}: supervised label '{target_text}' != target '{item['target']}'"
+            )
+
+        print(f"  All {len(tokenized)} boundary-only assertions passed")
 
     # ------ Debug dump ------
     current_debug_dump: dict | None = None
@@ -1103,31 +1276,42 @@ def _run_training(
     optimizer = optim.Adam(learning_rate=lr)
 
     # ------ Train loop ------
-    steps_per_epoch = max(1, len(tokenized) // batch_size) if tokenized else 0
-    if max_steps is None:
-        effective_steps = int(train_cfg.get("num_epochs", 1)) * steps_per_epoch
+    n_samples = len(tokenized)
+    num_epochs = int(train_cfg.get("num_epochs", 1))
+    all_groups = []
+    for _ in range(num_epochs):
+        all_groups.extend(build_microbatch_groups(n_samples, batch_size, grad_accum))
+    total_groups = len(all_groups)
+
+    if max_steps is not None:
+        effective_steps = min(max_steps, total_groups)
     else:
-        effective_steps = max_steps
-    print(f"\nStarting training: {effective_steps} steps (batch_size={batch_size}, "
-          f"grad_accum={grad_accum}, lr={lr})")
+        effective_steps = total_groups
+    groups_to_run = all_groups[:effective_steps]
+
+    total_samples = sum(g["samples"] for g in groups_to_run)
+    print(f"\nStarting training: {effective_steps} steps "
+          f"({total_samples} samples, {n_samples}/epoch, {num_epochs} epoch(s))")
+    print(f"  batch_size={batch_size}, grad_accum={grad_accum}, lr={lr}")
     print("=" * 60)
 
     update_run_status(run_id, "running", runs_dir)
     step_losses: list[float] = []
-    data_idx = 0
     start_time = time.time()
 
     loss_and_grad_fn = nn.value_and_grad(model, compute_loss)
     model.train()
 
-    for step in range(1, effective_steps + 1):
+    for step, group in enumerate(groups_to_run, 1):
         micro_losses: list[float] = []
         accumulated_grads = None
-        for _ in range(grad_accum):
-            if data_idx + batch_size > len(tokenized):
-                data_idx = 0
-            micro_batch = tokenized[data_idx:data_idx + batch_size]
-            data_idx += batch_size
+        g_start = group["start"]
+        g_micro = group["micro_batches"]
+
+        for m in range(g_micro):
+            m_start = g_start + m * batch_size
+            m_end = min(m_start + batch_size, group["end"])
+            micro_batch = tokenized[m_start:m_end]
 
             collated = collate_batch(micro_batch)
             loss, grads = loss_and_grad_fn(
@@ -1143,8 +1327,9 @@ def _run_training(
                 accumulated_grads = tree_map(lambda x, y: x + y, accumulated_grads, grads)
 
         avg_loss = sum(micro_losses) / len(micro_losses)
-        if grad_accum > 1:
-            accumulated_grads = tree_map(lambda x: x / grad_accum, accumulated_grads)
+        accumulated_grads = tree_map(
+            lambda x: x / g_micro, accumulated_grads,
+        )
         grad_norm = _grad_norm(accumulated_grads)
         optimizer.update(model, accumulated_grads)
         mx.eval(model.parameters(), optimizer.state)
@@ -1156,15 +1341,19 @@ def _run_training(
                       grad_norm=round(grad_norm, 6) if grad_norm is not None else None,
                       learning_rate=lr,
                       trainable_param_count=lora_info.get("trainable_param_count"),
-                      tokens_processed=step * batch_size * grad_accum * max_seq_length)
+                      samples_in_update=group["samples"],
+                      micro_batches_in_update=g_micro,
+                      tokens_processed=group["samples"] * max_seq_length)
 
         elapsed = time.time() - start_time
         grad_norm_text = f"{grad_norm:.4f}" if grad_norm is not None else "NA"
         print(f"  step {step}/{effective_steps}  loss={avg_loss:.4f}  "
-              f"grad_norm={grad_norm_text}  elapsed={elapsed:.1f}s")
+              f"grad_norm={grad_norm_text}  "
+              f"samples={group['samples']}  elapsed={elapsed:.1f}s")
 
     train_time = time.time() - start_time
-    print(f"\nTraining finished in {train_time:.1f}s")
+    consumed = sum(g["samples"] for g in groups_to_run)
+    print(f"\nTraining finished in {train_time:.1f}s ({consumed} samples consumed)")
 
     # ------ Save checkpoint ------
     ckpt_dir = run_dir / "checkpoints" / "final"
