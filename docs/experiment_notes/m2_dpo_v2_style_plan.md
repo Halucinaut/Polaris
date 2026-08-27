@@ -439,3 +439,64 @@ v4 的数据设计将梯度信号集中在分歧点：
 若 v4 仍出现以下任一情况，停止 DPO 风格训练：
 - Probe/Stress 0% 风格合规
 - 明显正确率回退（Stress correct < 43/50）
+
+## 12. Full-Sequence Attribution（000051，validated）
+
+### 12.1 概述
+
+对 DPO v4 minimal 4-epoch（run 000051，228 updates）的全序列 margin 归因分析。
+使用 `train_dpo.tokenize_pair()` 获取精确的 prompt/response masking，off-by-one 已修正
+（target position `t` 读取 `logits[t-1]`）。
+
+- 脚本：`scripts/diagnose_full_attribution_000051.py`
+- 纯函数：`polaris/attribution.py`（无 MLX 依赖）
+- 回归测试：`tests/test_attribution_pure.py`（make test）、`tests/test_attribution_000051.py`（MLX 集成）
+
+### 12.2 指标（449 pairs，validated）
+
+| 指标 | 值 |
+|---|---|
+| Avg exact margin | 50.71 |
+| Avg Solution chosen-shift | +2.12 |
+| Avg Solution share of margin | 3.9% |
+| Avg Solution rank (policy) | 6,913 |
+| Median Solution rank | 4,335 |
+| Solution token_id | 36842 |
+
+### 12.3 分类覆盖率（probe-30）
+
+| 类别 | token 数 | avg change |
+|---|---:|---:|
+| solution_keyword | 30 | +2.29 |
+| unclassified | 3,104 | +0.49 |
+| **总计** | **3,134** | — |
+| **覆盖率** | **0.96%** | — |
+
+v4 minimal chosen 含完整结构化回答，包括编号步骤、`Final:` 与 `\boxed{}`。
+当前分类器只可靠匹配到 30 个 `Solution` token；其余 3,104 个 response token 的 span
+未能与已知风格模式精确对齐，因此标记为 `unclassified`。这表示当前的位置分类覆盖有限，
+不表示这些结构在数据中缺失。
+
+### 12.4 关键发现
+
+1. **Solution 在 `prompt + <think>\n` 分支点的平均 rank 仍为 ~6913**（非 rank-1）。
+   即使用 logits[t-1] 修正后，policy 也没有将 Solution 推到贪心解码的首选位置。
+2. **在该配置与归因样本中，约 96% 的 margin 由 Solution 分歧点以外的 response token 构成**；
+   Solution 的平均贡献为 3.9%。全序列 DPO 的相对偏好增益没有集中到关键格式分歧上。
+3. **Solution chosen-shift = +2.12 nats**，policy 相对 reference 在 Solution 位置
+   有微弱提升，但远不足以成为 greedy choice。
+
+### 12.5 历史产物
+
+首次运行存在 off-by-one 错误（读取 logits[t] 而非 logits[t-1]），导致 Solution rank
+虚低（~1）和 share 虚高（23.6%）。已更正为 `logsumexp` 路径并与
+`compute_response_logprob` 交叉验证。旧报告保留为 `*_invalid_off_by_one.*`。
+
+### 12.6 验证状态
+
+- ✅ `make test`（system Python）：319 tests passed, 4 skipped（MLX 集成）
+- ✅ `.venv/bin/python -m unittest tests.test_attribution_000051`：6/6 passed
+- ✅ boundary consistency：Solution logprob/gap 与 `score_prefix()` 一致（delta < 0.1）
+- ✅ margin consistency：exact_margin 与 `compute_response_logprob` 一致（delta < 0.15）
+- ✅ off-by-one：synthetic logits 验证 logits[t-1] 映射
+- ✅ 分类：Final/boxed/numbered_step 正确分类，unclassified 不遗漏

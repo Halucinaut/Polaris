@@ -1,0 +1,53 @@
+{
+  "pilot_name": "dpo_reasoning_quality",
+  "base_seed": 20260827,
+  "model": "Qwen3-0.6B",
+  "adapter": "runs/000030_qwen3_0_6b_sft_gsm8k_500/checkpoints/final",
+  "temperature": 0.7,
+  "num_candidates_per_problem": 4,
+  "generation": {
+    "total_problems": 50,
+    "total_candidates": 200,
+    "correct_candidates": 156,
+    "accuracy": 0.78,
+    "problems_with_0_correct": 3,
+    "problems_with_1_correct": 3,
+    "problems_with_2_correct": 6,
+    "problems_with_3_correct": 11,
+    "problems_with_4_correct": 27,
+    "pairable_problems": 44
+  },
+  "pairing": {
+    "total_possible_pairs": 201,
+    "reviewed_pairs": 201,
+    "non_tie_pairs": 80,
+    "tie_rate_strict": 0.6019900497512438
+  },
+  "review_scoring": {
+    "chosen_total_distribution": {
+      "min": 6,
+      "max": 8,
+      "avg": 7.9
+    },
+    "rejected_total_distribution": {
+      "min": 2,
+      "max": 7,
+      "avg": 6.6
+    },
+    "gap_distribution": {
+      "min": 2,
+      "max": 6,
+      "avg": 3.6
+    }
+  },
+  "mechanical_filtering": {
+    "input_pairs": 8,
+    "rejected_length_ratio": 2,
+    "output_pairs": 8
+  },
+  "final_pairs": 8,
+  "target_pairs": 30,
+  "pilot_passed": false,
+  "failure_reason": "GSM8K problems too easy for M1 SFT model — temperature sampling produces near-identical reasoning quality.90% tie rate in initial review, 60% in strict review. Only 8 pairs pass all filters (target: 30).",
+  "recommendation": "Use harder problem set (MATH, competition math) or increase candidates per problem (8-16) to find more quality variation."
+}
