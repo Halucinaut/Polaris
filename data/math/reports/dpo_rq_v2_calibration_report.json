@@ -1,0 +1,63 @@
+{
+  "pilot_name": "dpo_reasoning_quality_v2",
+  "base_seed": 20260827,
+  "model": "Qwen3-0.6B",
+  "adapter": "runs/000030_qwen3_0_6b_sft_gsm8k_500/checkpoints/final",
+  "temperature": 1.0,
+  "num_candidates_per_problem": 8,
+  "calibration_rounds": {
+    "v2": {
+      "problems": 50,
+      "seed": 20260827,
+      "pairable": 28,
+      "passing": 14
+    },
+    "v2b": {
+      "problems": 100,
+      "seed": 20260828,
+      "pairable": 56,
+      "passing": 7
+    },
+    "v2b2": {
+      "problems": 46,
+      "seed": 20260828,
+      "pairable": 46,
+      "passing": 4
+    },
+    "v2c": {
+      "problems": 100,
+      "seed": 20260829,
+      "pairable": 57,
+      "passing": 6
+    }
+  },
+  "total_candidates_generated": 2000,
+  "total_review_results": 395,
+  "review_stats": {
+    "non_tie_rate": 0.8379746835443038,
+    "tie_rate": 0.1620253164556962
+  },
+  "quality_filter": {
+    "chosen_total_min": 6,
+    "gap_min": 2,
+    "rejected_total_min": 2,
+    "length_ratio_range": [
+      0.75,
+      1.33
+    ],
+    "similarity_range": [
+      0.1,
+      0.95
+    ]
+  },
+  "final_pairs": 31,
+  "unique_problems": 31,
+  "target_pairs": 30,
+  "pilot_passed": true,
+  "gap_distribution": {
+    "2": 18,
+    "3": 5,
+    "4": 4,
+    "5": 4
+  }
+}
