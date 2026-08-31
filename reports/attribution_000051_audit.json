@@ -1,0 +1,835 @@
+{
+  "description": "3 representative samples: worst/median/best chosen Solution policy-ref shift",
+  "samples": [
+    {
+      "problem_id": "gsm8k_train_d5_0315",
+      "chosen_response_tokens": 78,
+      "rejected_response_tokens": 65,
+      "exact_margin": 44.8125,
+      "policy_chosen_seq_lp": -139.3125,
+      "policy_rejected_seq_lp": -128.3125,
+      "ref_chosen_seq_lp": -184.25,
+      "ref_rejected_seq_lp": -128.4375,
+      "divergence_position_in_response": 2,
+      "solution_abs_position": 93,
+      "solution_token_id": 36842,
+      "solution_chosen_shift": -0.875,
+      "solution_shift_minus_rejected_div": 0.4375,
+      "solution_contribution": 0.4375,
+      "solution_share_of_margin": 0.009763,
+      "solution_analysis": {
+        "abs_position": 93,
+        "token_id": 36842,
+        "token_text": "Solution",
+        "policy_chosen_lp": -18.5,
+        "ref_chosen_lp": -17.625,
+        "policy_chosen_rank": 1326,
+        "policy_chosen_greedy_gap": -18.5,
+        "rejected_div_abs_position": 93,
+        "rejected_token_id": 9042,
+        "rejected_token_text": "Ag",
+        "policy_rejected_lp": -13.625,
+        "ref_rejected_lp": -12.3125,
+        "policy_rejected_rank": 138,
+        "chosen_shift": -0.875,
+        "rejected_shift": -1.3125,
+        "shift_minus_rejected_div": 0.4375
+      },
+      "probe_token_detail": {
+        "unclassified": {
+          "count": 78,
+          "changes": [
+            {
+              "position": 91,
+              "token_text": "<think>",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 92,
+              "token_text": "\n",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 94,
+              "token_text": ":\n",
+              "policy_lp": -1.5,
+              "ref_lp": -5.5,
+              "change": 4.0,
+              "rank": 1,
+              "greedy_gap": -1.25
+            },
+            {
+              "position": 95,
+              "token_text": "1",
+              "policy_lp": -4.625,
+              "ref_lp": -7.5625,
+              "change": 2.9375,
+              "rank": 6,
+              "greedy_gap": -4.125
+            },
+            {
+              "position": 96,
+              "token_text": ".",
+              "policy_lp": -1.375,
+              "ref_lp": -3.25,
+              "change": 1.875,
+              "rank": 1,
+              "greedy_gap": -0.5
+            },
+            {
+              "position": 97,
+              "token_text": " Ag",
+              "policy_lp": -12.875,
+              "ref_lp": -14.3125,
+              "change": 1.4375,
+              "rank": 74,
+              "greedy_gap": -12.75
+            },
+            {
+              "position": 98,
+              "token_text": "nes",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 99,
+              "token_text": " weekly",
+              "policy_lp": -13.25,
+              "ref_lp": -13.5,
+              "change": 0.25,
+              "rank": 16,
+              "greedy_gap": -13.25
+            },
+            {
+              "position": 100,
+              "token_text": " earnings",
+              "policy_lp": -0.25,
+              "ref_lp": -0.25,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 101,
+              "token_text": ":",
+              "policy_lp": -0.5,
+              "ref_lp": -0.375,
+              "change": -0.125,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 102,
+              "token_text": " $",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 103,
+              "token_text": "1",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 104,
+              "token_text": "5",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 105,
+              "token_text": " ×",
+              "policy_lp": -14.0625,
+              "ref_lp": -15.5,
+              "change": 1.4375,
+              "rank": 127,
+              "greedy_gap": -13.8125
+            },
+            {
+              "position": 106,
+              "token_text": " ",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 107,
+              "token_text": "8",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 108,
+              "token_text": " =",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 109,
+              "token_text": " $",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 110,
+              "token_text": "1",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 111,
+              "token_text": "2",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 112,
+              "token_text": "0",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 113,
+              "token_text": ".\n",
+              "policy_lp": -4.75,
+              "ref_lp": -4.75,
+              "change": 0.0,
+              "rank": 1,
+              "greedy_gap": -4.75
+            },
+            {
+              "position": 114,
+              "token_text": "2",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 115,
+              "token_text": ".",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 116,
+              "token_text": " Ag",
+              "policy_lp": -2.0,
+              "ref_lp": -3.125,
+              "change": 1.125,
+              "rank": 2,
+              "greedy_gap": -1.0
+            },
+            {
+              "position": 117,
+              "token_text": "nes",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 118,
+              "token_text": " monthly",
+              "policy_lp": -3.0,
+              "ref_lp": -1.25,
+              "change": -1.75,
+              "rank": 3,
+              "greedy_gap": -2.375
+            },
+            {
+              "position": 119,
+              "token_text": " earnings",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 120,
+              "token_text": ":",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 121,
+              "token_text": " $",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 122,
+              "token_text": "1",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 123,
+              "token_text": "2",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 124,
+              "token_text": "0",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 125,
+              "token_text": " ×",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 126,
+              "token_text": " ",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 127,
+              "token_text": "4",
+              "policy_lp": -0.25,
+              "ref_lp": -0.25,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 128,
+              "token_text": " =",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 129,
+              "token_text": " $",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 130,
+              "token_text": "4",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 131,
+              "token_text": "8",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 132,
+              "token_text": "0",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 133,
+              "token_text": ".\n",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 134,
+              "token_text": "3",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 135,
+              "token_text": ".",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 136,
+              "token_text": " Mil",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 137,
+              "token_text": "a",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 138,
+              "token_text": "'s",
+              "policy_lp": -6.125,
+              "ref_lp": -6.375,
+              "change": 0.25,
+              "rank": 2,
+              "greedy_gap": -6.125
+            },
+            {
+              "position": 139,
+              "token_text": " required",
+              "policy_lp": -9.375,
+              "ref_lp": -9.875,
+              "change": 0.5,
+              "rank": 10,
+              "greedy_gap": -9.125
+            },
+            {
+              "position": 140,
+              "token_text": " hours",
+              "policy_lp": -2.0,
+              "ref_lp": -2.125,
+              "change": 0.125,
+              "rank": 2,
+              "greedy_gap": -1.5
+            },
+            {
+              "position": 141,
+              "token_text": ":",
+              "policy_lp": -2.625,
+              "ref_lp": -2.0,
+              "change": -0.625,
+              "rank": 1,
+              "greedy_gap": -2.5
+            },
+            {
+              "position": 142,
+              "token_text": " $",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 143,
+              "token_text": "4",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 144,
+              "token_text": "8",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 145,
+              "token_text": "0",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 146,
+              "token_text": " �",
+              "policy_lp": -2.125,
+              "ref_lp": -2.0,
+              "change": -0.125,
+              "rank": 1,
+              "greedy_gap": -2.0
+            },
+            {
+              "position": 147,
+              "token_text": "�",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 148,
+              "token_text": " $",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 149,
+              "token_text": "1",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 150,
+              "token_text": "0",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 151,
+              "token_text": " =",
+              "policy_lp": -0.5,
+              "ref_lp": -0.375,
+              "change": -0.125,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 152,
+              "token_text": " ",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 153,
+              "token_text": "4",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 154,
+              "token_text": "8",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 155,
+              "token_text": ".\n",
+              "policy_lp": -9.75,
+              "ref_lp": -10.375,
+              "change": 0.625,
+              "rank": 2,
+              "greedy_gap": -9.75
+            },
+            {
+              "position": 156,
+              "token_text": "</think>",
+              "policy_lp": -0.125,
+              "ref_lp": -0.125,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 157,
+              "token_text": "\n\n",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 158,
+              "token_text": "Final",
+              "policy_lp": -7.5625,
+              "ref_lp": -19.0,
+              "change": 11.4375,
+              "rank": 26,
+              "greedy_gap": -7.4375
+            },
+            {
+              "position": 159,
+              "token_text": ":",
+              "policy_lp": -12.0,
+              "ref_lp": -19.5,
+              "change": 7.5,
+              "rank": 16,
+              "greedy_gap": -11.5
+            },
+            {
+              "position": 160,
+              "token_text": " The",
+              "policy_lp": -9.0625,
+              "ref_lp": -16.0,
+              "change": 6.9375,
+              "rank": 11,
+              "greedy_gap": -9.0625
+            },
+            {
+              "position": 161,
+              "token_text": " answer",
+              "policy_lp": 0.0,
+              "ref_lp": -0.25,
+              "change": 0.25,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 162,
+              "token_text": " is",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 163,
+              "token_text": " \\",
+              "policy_lp": -1.125,
+              "ref_lp": -8.125,
+              "change": 7.0,
+              "rank": 1,
+              "greedy_gap": -0.75
+            },
+            {
+              "position": 164,
+              "token_text": "boxed",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 165,
+              "token_text": "{",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 166,
+              "token_text": "4",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 167,
+              "token_text": "8",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 168,
+              "token_text": "}.",
+              "policy_lp": 0.0,
+              "ref_lp": -0.875,
+              "change": 0.875,
+              "rank": 0,
+              "greedy_gap": 0.0
+            },
+            {
+              "position": 169,
+              "token_text": "<|im_end|>",
+              "policy_lp": 0.0,
+              "ref_lp": 0.0,
+              "change": 0.0,
+              "rank": 0,
+              "greedy_gap": 0.0
+            }
+          ],
+          "avg_change": 0.58734
+        },
+        "solution_keyword": {
+          "count": 1,
+          "changes": [
+            {
+              "position": 93,
+              "token_text": "Solution",
+              "policy_lp": -18.5,
+              "ref_lp": -17.625,
+              "change": -0.875,
+              "rank": 1326,
+              "greedy_gap": -18.5
+            }
+          ],
+          "avg_change": -0.875
+        }
+      }
+    },
+    {
+      "problem_id": "gsm8k_train_d5_0263",
+      "chosen_response_tokens": 72,
+      "rejected_response_tokens": 61,
+      "exact_margin": 43.3125,
+      "policy_chosen_seq_lp": -191.875,
+      "policy_rejected_seq_lp": -123.1875,
+      "ref_chosen_seq_lp": -239.5625,
+      "ref_rejected_seq_lp": -127.5625,
+      "divergence_position_in_response": 2,
+      "solution_abs_position": 75,
+      "solution_token_id": 36842,
+      "solution_chosen_shift": 2.125,
+      "solution_shift_minus_rejected_div": 1.875,
+      "solution_contribution": 1.875,
+      "solution_share_of_margin": 0.04329,
+      "solution_analysis": {
+        "abs_position": 75,
+        "token_id": 36842,
+        "token_text": "Solution",
+        "policy_chosen_lp": -20.625,
+        "ref_chosen_lp": -22.75,
+        "policy_chosen_rank": 1169,
+        "policy_chosen_greedy_gap": -20.5,
+        "rejected_div_abs_position": 75,
+        "rejected_token_id": 4854,
+        "rejected_token_text": "Each",
+        "policy_rejected_lp": -4.25,
+        "ref_rejected_lp": -4.5,
+        "policy_rejected_rank": 2,
+        "chosen_shift": 2.125,
+        "rejected_shift": 0.25,
+        "shift_minus_rejected_div": 1.875
+      }
+    },
+    {
+      "problem_id": "gsm8k_train_d5_0464",
+      "chosen_response_tokens": 54,
+      "rejected_response_tokens": 45,
+      "exact_margin": 61.75,
+      "policy_chosen_seq_lp": -118.9375,
+      "policy_rejected_seq_lp": -57.5625,
+      "ref_chosen_seq_lp": -183.0625,
+      "ref_rejected_seq_lp": -59.9375,
+      "divergence_position_in_response": 2,
+      "solution_abs_position": 78,
+      "solution_token_id": 36842,
+      "solution_chosen_shift": 5.0,
+      "solution_shift_minus_rejected_div": 3.75,
+      "solution_contribution": 3.75,
+      "solution_share_of_margin": 0.060729,
+      "solution_analysis": {
+        "abs_position": 78,
+        "token_id": 36842,
+        "token_text": "Solution",
+        "policy_chosen_lp": -26.125,
+        "ref_chosen_lp": -31.125,
+        "policy_chosen_rank": 16731,
+        "policy_chosen_greedy_gap": -26.0,
+        "rejected_div_abs_position": 78,
+        "rejected_token_id": 36,
+        "rejected_token_text": "E",
+        "policy_rejected_lp": -17.0,
+        "ref_rejected_lp": -18.25,
+        "policy_rejected_rank": 132,
+        "chosen_shift": 5.0,
+        "rejected_shift": 1.25,
+        "shift_minus_rejected_div": 3.75
+      }
+    }
+  ]
+}

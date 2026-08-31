@@ -26,9 +26,9 @@ Math 不是业务目标。Math 是 post-training calibration environment。后�
 
 M0 已完成并通过端到端验收。M0 只建立工程骨架，不包含真实模型下载、数据下载、MLX 接入或训练。
 
-当前准备进入 M1。M1 的目标是在 Qwen3-0.6B 上完成第一组可复现 Math SFT。详细步骤、指标和验收标准见 M1.md。
+当前处于 M2.5 准备阶段。M0、M1 已通过；M2 DPO 已完成训练、评估、风格控制实验与 token 归因，结论为工程与诊断通过、效果目标未通过。下一项工作是实现真实 RL sanity，验证 rollout、reward、logprob、KL、checkpoint 与 resume。
 
-M0 的具体内容、验收命令和通过标准见 M0.md。
+M2 的正式收口见 `docs/experiment_notes/m2_dpo_closeout.md`。
 
 ## 5. 阶段路线图
 
@@ -36,11 +36,11 @@ M0：工程骨架与实验协议。已完成。
 
 M1：Qwen3-0.6B Math SFT。目标是完成第一组可复现 SFT run，验证 loss、format adherence、eval、sample diff 和硬件日志。
 
-M2：Math DPO。目标是学习 chosen/rejected pair 构造、preference margin、length bias、mode collapse 和 preference optimization 诊断。
+M2：Math DPO。已收口。完成 chosen/rejected pair 构造、preference margin、length bias、模式坍缩、自由生成分支点与 token 归因诊断；当前设置下的风格迁移效果未通过。
 
 M2.5：RL sanity。目标是验证 rollout、reward、logprob、KL、checkpoint、resume 和日志链路。
 
-M3：Math GRPO。目标是建立 verifiable reward 下的 policy optimization 闭环。
+M3：Math GRPO。目标是建立 verifiable reward 下的 policy optimization 闭环；前置条件是 M2.5 的真实链路通过。
 
 M4：Math PPO。完成最小 PPO 或 failure report；理解 value、advantage、KL、reward normalization 的影响。
 

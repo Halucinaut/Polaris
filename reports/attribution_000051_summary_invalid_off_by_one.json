@@ -1,0 +1,33 @@
+{
+  "description": "Full-sequence attribution for DPO v4 minimal 4-epoch (000051)",
+  "policy": "runs/000051_qwen3_0_6b_dpo_v4_style_minimal_4ep",
+  "reference": "runs/000030_qwen3_0_6b_sft_gsm8k_500",
+  "n_pairs": 449,
+  "aggregate": {
+    "avg_total_margin": 15.1,
+    "avg_solution_share": 0.236,
+    "avg_policy_ref_shift": 50.71,
+    "avg_solution_rank": 0.9,
+    "median_solution_rank": 1
+  },
+  "probe_position_analysis": {
+    "solution_keyword": {
+      "count": 30,
+      "avg_change": 3.0434,
+      "min_change": 0.0614,
+      "max_change": 6.3438
+    },
+    "numbered_step_prefix": {
+      "count": 386,
+      "avg_change": 0.269,
+      "min_change": -0.7188,
+      "max_change": 6.0
+    },
+    "other": {
+      "count": 2658,
+      "avg_change": 0.5202,
+      "min_change": -1.75,
+      "max_change": 16.7102
+    }
+  }
+}

@@ -1,0 +1,2319 @@
+{
+  "description": "Extended boundary diagnosis: multi-token prefix scoring, first-token vocab rank, forced-prefix generation. Style check uses eval_style_dpo.check_style_adherence.",
+  "scored_prefix": "Solution:\n1.",
+  "forced_prefix": "<think>\nSolution:\n1.",
+  "probe_data": "data/math/probes/dpo_v2_style_train_probe_30_eval.jsonl",
+  "n_samples": 30,
+  "force_gen_tokens": 128,
+  "results": {
+    "m1_sft": [
+      {
+        "problem_id": "gsm8k_train_d5_0009",
+        "prefix_logprob": -32.5898,
+        "prefix_avg_logprob": -8.1475,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 5118,
+        "first_token_gap": -21.0562,
+        "greedy_token": "'There'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0286",
+        "prefix_logprob": -43.0361,
+        "prefix_avg_logprob": -10.759,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 27172,
+        "first_token_gap": -25.7343,
+        "greedy_token": "'From'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 88
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0380",
+        "prefix_logprob": -40.7031,
+        "prefix_avg_logprob": -10.1758,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 23232,
+        "first_token_gap": -28.3671,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 104
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0239",
+        "prefix_logprob": -33.4863,
+        "prefix_avg_logprob": -8.3716,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 8062,
+        "first_token_gap": -24.2421,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 115
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0323",
+        "prefix_logprob": -30.4678,
+        "prefix_avg_logprob": -7.6169,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 6721,
+        "first_token_gap": -22.4602,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0017",
+        "prefix_logprob": -42.9062,
+        "prefix_avg_logprob": -10.7266,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 10793,
+        "first_token_gap": -21.7412,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0436",
+        "prefix_logprob": -43.625,
+        "prefix_avg_logprob": -10.9062,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 7598,
+        "first_token_gap": -26.7061,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 89
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0439",
+        "prefix_logprob": -28.0088,
+        "prefix_avg_logprob": -7.0022,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1759,
+        "first_token_gap": -22.125,
+        "greedy_token": "'On'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0453",
+        "prefix_logprob": -34.519,
+        "prefix_avg_logprob": -8.6298,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 3527,
+        "first_token_gap": -22.2421,
+        "greedy_token": "'He'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0093",
+        "prefix_logprob": -33.6426,
+        "prefix_avg_logprob": -8.4106,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 58936,
+        "first_token_gap": -23.6797,
+        "greedy_token": "'She'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0128",
+        "prefix_logprob": -31.6016,
+        "prefix_avg_logprob": -7.9004,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 4188,
+        "first_token_gap": -19.8594,
+        "greedy_token": "'Bob'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 122
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0091",
+        "prefix_logprob": -37.8438,
+        "prefix_avg_logprob": -9.4609,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 4921,
+        "first_token_gap": -19.2832,
+        "greedy_token": "'A'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 118
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0037",
+        "prefix_logprob": -35.8262,
+        "prefix_avg_logprob": -8.9565,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 13933,
+        "first_token_gap": -22.5225,
+        "greedy_token": "'Two'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 133
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0049",
+        "prefix_logprob": -37.7812,
+        "prefix_avg_logprob": -9.4453,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 17170,
+        "first_token_gap": -22.2343,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 72
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0007",
+        "prefix_logprob": -61.0938,
+        "prefix_avg_logprob": -15.2734,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 12022,
+        "first_token_gap": -28.875,
+        "greedy_token": "'There'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 85
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0175",
+        "prefix_logprob": -33.172,
+        "prefix_avg_logprob": -8.293,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 18721,
+        "first_token_gap": -25.073,
+        "greedy_token": "'He'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0315",
+        "prefix_logprob": -33.875,
+        "prefix_avg_logprob": -8.4688,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1672,
+        "first_token_gap": -17.4551,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 111
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0085",
+        "prefix_logprob": -31.6533,
+        "prefix_avg_logprob": -7.9133,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1357,
+        "first_token_gap": -19.6013,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0471",
+        "prefix_logprob": -37.3359,
+        "prefix_avg_logprob": -9.334,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 3821,
+        "first_token_gap": -22.3593,
+        "greedy_token": "'Josh'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0178",
+        "prefix_logprob": -30.3008,
+        "prefix_avg_logprob": -7.5752,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 55523,
+        "first_token_gap": -25.8516,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0268",
+        "prefix_logprob": -30.3457,
+        "prefix_avg_logprob": -7.5864,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 465,
+        "first_token_gap": -15.5508,
+        "greedy_token": "'Larry'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 86
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0244",
+        "prefix_logprob": -31.7501,
+        "prefix_avg_logprob": -7.9375,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 4710,
+        "first_token_gap": -19.7412,
+        "greedy_token": "'Billy'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 95
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0039",
+        "prefix_logprob": -54.0938,
+        "prefix_avg_logprob": -13.5234,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 10001,
+        "first_token_gap": -21.0283,
+        "greedy_token": "'I'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 56
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0322",
+        "prefix_logprob": -36.3047,
+        "prefix_avg_logprob": -9.0762,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 28806,
+        "first_token_gap": -25.7637,
+        "greedy_token": "'He'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 106
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0028",
+        "prefix_logprob": -41.3398,
+        "prefix_avg_logprob": -10.335,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2448,
+        "first_token_gap": -18.9921,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 81
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0331",
+        "prefix_logprob": -44.9961,
+        "prefix_avg_logprob": -11.249,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 13785,
+        "first_token_gap": -26.5,
+        "greedy_token": "'There'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 86
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0387",
+        "prefix_logprob": -43.4692,
+        "prefix_avg_logprob": -10.8673,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 3403,
+        "first_token_gap": -23.125,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 64
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0485",
+        "prefix_logprob": -43.2344,
+        "prefix_avg_logprob": -10.8086,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 69029,
+        "first_token_gap": -30.375,
+        "greedy_token": "'Since'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 72
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0048",
+        "prefix_logprob": -47.9688,
+        "prefix_avg_logprob": -11.9922,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 4929,
+        "first_token_gap": -26.3671,
+        "greedy_token": "'Jan'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 78
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0255",
+        "prefix_logprob": -41.875,
+        "prefix_avg_logprob": -10.4688,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 4404,
+        "first_token_gap": -21.875,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 65
+      }
+    ],
+    "dpo_v2": [
+      {
+        "problem_id": "gsm8k_train_d5_0009",
+        "prefix_logprob": -26.8047,
+        "prefix_avg_logprob": -6.7012,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 3921,
+        "first_token_gap": -19.1377,
+        "greedy_token": "'There'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0286",
+        "prefix_logprob": -33.394,
+        "prefix_avg_logprob": -8.3485,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 16721,
+        "first_token_gap": -22.8352,
+        "greedy_token": "'From'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 88
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0380",
+        "prefix_logprob": -32.0938,
+        "prefix_avg_logprob": -8.0234,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 14360,
+        "first_token_gap": -26.2421,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 105
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0239",
+        "prefix_logprob": -27.5425,
+        "prefix_avg_logprob": -6.8856,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 8039,
+        "first_token_gap": -22.9921,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 115
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0323",
+        "prefix_logprob": -26.6567,
+        "prefix_avg_logprob": -6.6642,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 4363,
+        "first_token_gap": -20.5811,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0017",
+        "prefix_logprob": -35.5781,
+        "prefix_avg_logprob": -8.8945,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 8023,
+        "first_token_gap": -20.835,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0436",
+        "prefix_logprob": -35.4219,
+        "prefix_avg_logprob": -8.8555,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 7223,
+        "first_token_gap": -24.5435,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 89
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0439",
+        "prefix_logprob": -24.0146,
+        "prefix_avg_logprob": -6.0037,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 963,
+        "first_token_gap": -19.6171,
+        "greedy_token": "'On'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0453",
+        "prefix_logprob": -26.6865,
+        "prefix_avg_logprob": -6.6716,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2334,
+        "first_token_gap": -20.0933,
+        "greedy_token": "'He'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 120
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0093",
+        "prefix_logprob": -29.2041,
+        "prefix_avg_logprob": -7.301,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 36496,
+        "first_token_gap": -21.3906,
+        "greedy_token": "'She'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0128",
+        "prefix_logprob": -26.1173,
+        "prefix_avg_logprob": -6.5293,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2953,
+        "first_token_gap": -18.5273,
+        "greedy_token": "'Bob'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0091",
+        "prefix_logprob": -28.3906,
+        "prefix_avg_logprob": -7.0977,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2197,
+        "first_token_gap": -17.2266,
+        "greedy_token": "'A'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 118
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0037",
+        "prefix_logprob": -29.5723,
+        "prefix_avg_logprob": -7.3931,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 10674,
+        "first_token_gap": -21.2285,
+        "greedy_token": "'Two'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0049",
+        "prefix_logprob": -30.5312,
+        "prefix_avg_logprob": -7.6328,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 11373,
+        "first_token_gap": -20.448,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 76
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0007",
+        "prefix_logprob": -45.4297,
+        "prefix_avg_logprob": -11.3574,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 5872,
+        "first_token_gap": -25.625,
+        "greedy_token": "'There'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 74
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0175",
+        "prefix_logprob": -26.3362,
+        "prefix_avg_logprob": -6.584,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 12896,
+        "first_token_gap": -23.3843,
+        "greedy_token": "'He'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 103
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0315",
+        "prefix_logprob": -26.7812,
+        "prefix_avg_logprob": -6.6953,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1511,
+        "first_token_gap": -17.4912,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 105
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0085",
+        "prefix_logprob": -25.989,
+        "prefix_avg_logprob": -6.4973,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 796,
+        "first_token_gap": -17.4561,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0471",
+        "prefix_logprob": -29.543,
+        "prefix_avg_logprob": -7.3857,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1973,
+        "first_token_gap": -20.6093,
+        "greedy_token": "'Josh'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 131
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0178",
+        "prefix_logprob": -26.3293,
+        "prefix_avg_logprob": -6.5823,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 39895,
+        "first_token_gap": -24.4629,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0268",
+        "prefix_logprob": -25.6074,
+        "prefix_avg_logprob": -6.4019,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 357,
+        "first_token_gap": -15.1816,
+        "greedy_token": "'Larry'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 86
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0244",
+        "prefix_logprob": -28.4338,
+        "prefix_avg_logprob": -7.1085,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 4026,
+        "first_token_gap": -19.3662,
+        "greedy_token": "'Billy'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 95
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0039",
+        "prefix_logprob": -44.375,
+        "prefix_avg_logprob": -11.0938,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 5557,
+        "first_token_gap": -19.2617,
+        "greedy_token": "'I'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 73
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0322",
+        "prefix_logprob": -29.5566,
+        "prefix_avg_logprob": -7.3892,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 18343,
+        "first_token_gap": -23.5093,
+        "greedy_token": "'He'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 102
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0028",
+        "prefix_logprob": -29.9863,
+        "prefix_avg_logprob": -7.4966,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1091,
+        "first_token_gap": -16.6171,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 81
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0331",
+        "prefix_logprob": -36.2051,
+        "prefix_avg_logprob": -9.0513,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 8476,
+        "first_token_gap": -23.8593,
+        "greedy_token": "'There'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 92
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0387",
+        "prefix_logprob": -31.375,
+        "prefix_avg_logprob": -7.8438,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2108,
+        "first_token_gap": -20.125,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 66
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0485",
+        "prefix_logprob": -34.4219,
+        "prefix_avg_logprob": -8.6055,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 46190,
+        "first_token_gap": -27.2421,
+        "greedy_token": "'Since'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 72
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0048",
+        "prefix_logprob": -40.1875,
+        "prefix_avg_logprob": -10.0469,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2860,
+        "first_token_gap": -23.7343,
+        "greedy_token": "'Jan'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 69
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0255",
+        "prefix_logprob": -32.2812,
+        "prefix_avg_logprob": -8.0703,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 3251,
+        "first_token_gap": -20.75,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 72
+      }
+    ],
+    "dpo_v3": [
+      {
+        "problem_id": "gsm8k_train_d5_0009",
+        "prefix_logprob": -17.7104,
+        "prefix_avg_logprob": -4.4276,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1063,
+        "first_token_gap": -13.4844,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0286",
+        "prefix_logprob": -20.9316,
+        "prefix_avg_logprob": -5.2329,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 4585,
+        "first_token_gap": -16.6914,
+        "greedy_token": "'From'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 85
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0380",
+        "prefix_logprob": -21.647,
+        "prefix_avg_logprob": -5.4117,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 4233,
+        "first_token_gap": -19.9102,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0239",
+        "prefix_logprob": -18.5168,
+        "prefix_avg_logprob": -4.6292,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2311,
+        "first_token_gap": -16.9414,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0323",
+        "prefix_logprob": -19.3521,
+        "prefix_avg_logprob": -4.838,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1086,
+        "first_token_gap": -15.4941,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0017",
+        "prefix_logprob": -21.5469,
+        "prefix_avg_logprob": -5.3867,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2049,
+        "first_token_gap": -15.875,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 120
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0436",
+        "prefix_logprob": -22.168,
+        "prefix_avg_logprob": -5.542,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2976,
+        "first_token_gap": -18.4297,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0439",
+        "prefix_logprob": -15.751,
+        "prefix_avg_logprob": -3.9377,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 169,
+        "first_token_gap": -13.1272,
+        "greedy_token": "'On'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0453",
+        "prefix_logprob": -17.3364,
+        "prefix_avg_logprob": -4.3341,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 811,
+        "first_token_gap": -15.7539,
+        "greedy_token": "'He'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0093",
+        "prefix_logprob": -22.0176,
+        "prefix_avg_logprob": -5.5044,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 5366,
+        "first_token_gap": -15.5,
+        "greedy_token": "'She'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0128",
+        "prefix_logprob": -19.7375,
+        "prefix_avg_logprob": -4.9344,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1686,
+        "first_token_gap": -15.8281,
+        "greedy_token": "'Bob'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0091",
+        "prefix_logprob": -14.8545,
+        "prefix_avg_logprob": -3.7136,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 269,
+        "first_token_gap": -11.7109,
+        "greedy_token": "'A'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 124
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0037",
+        "prefix_logprob": -21.738,
+        "prefix_avg_logprob": -5.4345,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 5554,
+        "first_token_gap": -17.6094,
+        "greedy_token": "'When'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0049",
+        "prefix_logprob": -19.7314,
+        "prefix_avg_logprob": -4.9329,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1539,
+        "first_token_gap": -15.8418,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 85
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0007",
+        "prefix_logprob": -22.1797,
+        "prefix_avg_logprob": -5.5449,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1104,
+        "first_token_gap": -17.9185,
+        "greedy_token": "'There'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 73
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0175",
+        "prefix_logprob": -19.4336,
+        "prefix_avg_logprob": -4.8584,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 3309,
+        "first_token_gap": -18.6914,
+        "greedy_token": "'He'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0315",
+        "prefix_logprob": -17.3936,
+        "prefix_avg_logprob": -4.3484,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 812,
+        "first_token_gap": -14.0156,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 123
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0085",
+        "prefix_logprob": -17.6584,
+        "prefix_avg_logprob": -4.4146,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 270,
+        "first_token_gap": -13.123,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 123
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0471",
+        "prefix_logprob": -19.6201,
+        "prefix_avg_logprob": -4.905,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 495,
+        "first_token_gap": -16.4763,
+        "greedy_token": "'Josh'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 131
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0178",
+        "prefix_logprob": -21.4917,
+        "prefix_avg_logprob": -5.3729,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 13645,
+        "first_token_gap": -19.9805,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0268",
+        "prefix_logprob": -19.0811,
+        "prefix_avg_logprob": -4.7703,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 158,
+        "first_token_gap": -13.1104,
+        "greedy_token": "'Larry'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 83
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0244",
+        "prefix_logprob": -22.5427,
+        "prefix_avg_logprob": -5.6357,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1200,
+        "first_token_gap": -16.2383,
+        "greedy_token": "'Billy'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 118
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0039",
+        "prefix_logprob": -23.9531,
+        "prefix_avg_logprob": -5.9883,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1094,
+        "first_token_gap": -14.6875,
+        "greedy_token": "'I'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0322",
+        "prefix_logprob": -19.4453,
+        "prefix_avg_logprob": -4.8613,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 3546,
+        "first_token_gap": -18.1025,
+        "greedy_token": "'He'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 109
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0028",
+        "prefix_logprob": -15.2656,
+        "prefix_avg_logprob": -3.8164,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 214,
+        "first_token_gap": -12.1355,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 90
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0331",
+        "prefix_logprob": -21.2334,
+        "prefix_avg_logprob": -5.3083,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2793,
+        "first_token_gap": -18.207,
+        "greedy_token": "'There'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0387",
+        "prefix_logprob": -18.1401,
+        "prefix_avg_logprob": -4.535,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 553,
+        "first_token_gap": -15.6796,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 66
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0485",
+        "prefix_logprob": -22.3093,
+        "prefix_avg_logprob": -5.5773,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 7280,
+        "first_token_gap": -20.0029,
+        "greedy_token": "'Since'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 84
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0048",
+        "prefix_logprob": -26.0059,
+        "prefix_avg_logprob": -6.5015,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 964,
+        "first_token_gap": -17.6475,
+        "greedy_token": "'Jan'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0255",
+        "prefix_logprob": -19.6448,
+        "prefix_avg_logprob": -4.9112,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 817,
+        "first_token_gap": -17.2421,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 122
+      }
+    ],
+    "dpo_v4": [
+      {
+        "problem_id": "gsm8k_train_d5_0009",
+        "prefix_logprob": -25.9258,
+        "prefix_avg_logprob": -6.4814,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2807,
+        "first_token_gap": -18.8389,
+        "greedy_token": "'There'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0286",
+        "prefix_logprob": -34.4253,
+        "prefix_avg_logprob": -8.6063,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 18219,
+        "first_token_gap": -23.6013,
+        "greedy_token": "'From'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 88
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0380",
+        "prefix_logprob": -32.5234,
+        "prefix_avg_logprob": -8.1309,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 14979,
+        "first_token_gap": -26.8671,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 96
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0239",
+        "prefix_logprob": -27.0708,
+        "prefix_avg_logprob": -6.7677,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 6186,
+        "first_token_gap": -22.7421,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 115
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0323",
+        "prefix_logprob": -26.5001,
+        "prefix_avg_logprob": -6.625,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 4341,
+        "first_token_gap": -21.0933,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0017",
+        "prefix_logprob": -35.5469,
+        "prefix_avg_logprob": -8.8867,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 7693,
+        "first_token_gap": -20.5518,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0436",
+        "prefix_logprob": -35.0117,
+        "prefix_avg_logprob": -8.7529,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 6350,
+        "first_token_gap": -25.2102,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 105
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0439",
+        "prefix_logprob": -24.3645,
+        "prefix_avg_logprob": -6.0911,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1125,
+        "first_token_gap": -20.375,
+        "greedy_token": "'On'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0453",
+        "prefix_logprob": -26.9197,
+        "prefix_avg_logprob": -6.7299,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1995,
+        "first_token_gap": -20.1013,
+        "greedy_token": "'He'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0093",
+        "prefix_logprob": -29.2251,
+        "prefix_avg_logprob": -7.3063,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 37325,
+        "first_token_gap": -21.668,
+        "greedy_token": "'She'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0128",
+        "prefix_logprob": -24.9844,
+        "prefix_avg_logprob": -6.2461,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2455,
+        "first_token_gap": -17.582,
+        "greedy_token": "'He'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0091",
+        "prefix_logprob": -28.2969,
+        "prefix_avg_logprob": -7.0742,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2414,
+        "first_token_gap": -17.7832,
+        "greedy_token": "'A'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 127
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0037",
+        "prefix_logprob": -28.9795,
+        "prefix_avg_logprob": -7.2449,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 8669,
+        "first_token_gap": -20.8755,
+        "greedy_token": "'Two'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0049",
+        "prefix_logprob": -30.1953,
+        "prefix_avg_logprob": -7.5488,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 10895,
+        "first_token_gap": -20.3433,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 76
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0007",
+        "prefix_logprob": -45.8594,
+        "prefix_avg_logprob": -11.4648,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 6086,
+        "first_token_gap": -26.5,
+        "greedy_token": "'There'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 72
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0175",
+        "prefix_logprob": -25.7892,
+        "prefix_avg_logprob": -6.4473,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 10061,
+        "first_token_gap": -23.0137,
+        "greedy_token": "'He'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 103
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0315",
+        "prefix_logprob": -26.4922,
+        "prefix_avg_logprob": -6.623,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1399,
+        "first_token_gap": -17.7852,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0085",
+        "prefix_logprob": -25.575,
+        "prefix_avg_logprob": -6.3937,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 736,
+        "first_token_gap": -17.4397,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 131
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0471",
+        "prefix_logprob": -29.0078,
+        "prefix_avg_logprob": -7.252,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2066,
+        "first_token_gap": -20.6093,
+        "greedy_token": "'Josh'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0178",
+        "prefix_logprob": -26.438,
+        "prefix_avg_logprob": -6.6095,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 35868,
+        "first_token_gap": -24.7529,
+        "greedy_token": "'First'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0268",
+        "prefix_logprob": -24.5664,
+        "prefix_avg_logprob": -6.1416,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 297,
+        "first_token_gap": -14.1973,
+        "greedy_token": "'Larry'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 86
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0244",
+        "prefix_logprob": -27.0354,
+        "prefix_avg_logprob": -6.7589,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 3055,
+        "first_token_gap": -18.2783,
+        "greedy_token": "'Billy'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 95
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0039",
+        "prefix_logprob": -44.0625,
+        "prefix_avg_logprob": -11.0156,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 5936,
+        "first_token_gap": -19.3379,
+        "greedy_token": "'I'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 73
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0322",
+        "prefix_logprob": -30.8174,
+        "prefix_avg_logprob": -7.7043,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 19539,
+        "first_token_gap": -24.1729,
+        "greedy_token": "'He'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 97
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0028",
+        "prefix_logprob": -30.0503,
+        "prefix_avg_logprob": -7.5126,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1050,
+        "first_token_gap": -16.4843,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 81
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0331",
+        "prefix_logprob": -36.7478,
+        "prefix_avg_logprob": -9.187,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 9499,
+        "first_token_gap": -24.4921,
+        "greedy_token": "'There'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 81
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0387",
+        "prefix_logprob": -31.7812,
+        "prefix_avg_logprob": -7.9453,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 1536,
+        "first_token_gap": -20.25,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 64
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0485",
+        "prefix_logprob": -35.1016,
+        "prefix_avg_logprob": -8.7754,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 46861,
+        "first_token_gap": -28.25,
+        "greedy_token": "'Since'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 72
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0048",
+        "prefix_logprob": -39.1406,
+        "prefix_avg_logprob": -9.7852,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 2640,
+        "first_token_gap": -23.6093,
+        "greedy_token": "'Jan'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 126
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0255",
+        "prefix_logprob": -31.4062,
+        "prefix_avg_logprob": -7.8516,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 3431,
+        "first_token_gap": -20.625,
+        "greedy_token": "'The'",
+        "greedy_enters_chosen": false,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 72
+      }
+    ],
+    "sft_ctrl": [
+      {
+        "problem_id": "gsm8k_train_d5_0009",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 113
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0286",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 84
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0380",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 112
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0239",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 93
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0323",
+        "prefix_logprob": -0.0157,
+        "prefix_avg_logprob": -0.0039,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0017",
+        "prefix_logprob": -0.0157,
+        "prefix_avg_logprob": -0.0039,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 117
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0436",
+        "prefix_logprob": -0.0157,
+        "prefix_avg_logprob": -0.0039,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 66
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0439",
+        "prefix_logprob": -0.0157,
+        "prefix_avg_logprob": -0.0039,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 120
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0453",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 95
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0093",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 115
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0128",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 73
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0091",
+        "prefix_logprob": -0.0157,
+        "prefix_avg_logprob": -0.0039,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 83
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0037",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0049",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 71
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0007",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 57
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0175",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 93
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0315",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 106
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0085",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 120
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0471",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 124
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0178",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0268",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 70
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0244",
+        "prefix_logprob": -0.0157,
+        "prefix_avg_logprob": -0.0039,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": false,
+        "forced_style_errors": [
+          "invalid_think_tags",
+          "steps_not_contiguous",
+          "invalid_final_template"
+        ],
+        "forced_tokens_generated": 134
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0039",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 74
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0322",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 111
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0028",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 100
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0331",
+        "prefix_logprob": -0.0157,
+        "prefix_avg_logprob": -0.0039,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 58
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0387",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 80
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0485",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 60
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0048",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 79
+      },
+      {
+        "problem_id": "gsm8k_train_d5_0255",
+        "prefix_logprob": -0.0079,
+        "prefix_avg_logprob": -0.002,
+        "prefix_num_tokens": 4,
+        "first_token_rank": 0,
+        "first_token_gap": 0.0,
+        "greedy_token": "'Solution'",
+        "greedy_enters_chosen": true,
+        "forced_style_adherent": true,
+        "forced_style_errors": [],
+        "forced_tokens_generated": 94
+      }
+    ]
+  },
+  "summary": {
+    "m1_sft": {
+      "greedy_enters_chosen": 0,
+      "forced_style_adherent": 0,
+      "avg_prefix_logprob": -38.29,
+      "avg_first_token_rank": 14274.2,
+      "avg_first_token_gap": -23.03
+    },
+    "dpo_v2": {
+      "greedy_enters_chosen": 0,
+      "forced_style_adherent": 0,
+      "avg_prefix_logprob": -30.83,
+      "avg_first_token_rank": 9494.7,
+      "avg_first_token_gap": -21.15
+    },
+    "dpo_v3": {
+      "greedy_enters_chosen": 0,
+      "forced_style_adherent": 0,
+      "avg_prefix_logprob": -19.95,
+      "avg_first_token_rank": 2398.4,
+      "avg_first_token_gap": -16.18
+    },
+    "dpo_v4": {
+      "greedy_enters_chosen": 0,
+      "forced_style_adherent": 0,
+      "avg_prefix_logprob": -30.66,
+      "avg_first_token_rank": 9183.8,
+      "avg_first_token_gap": -21.25
+    },
+    "sft_ctrl": {
+      "greedy_enters_chosen": 30,
+      "forced_style_adherent": 26,
+      "avg_prefix_logprob": -0.01,
+      "avg_first_token_rank": 0.0,
+      "avg_first_token_gap": 0.0
+    }
+  }
+}

@@ -19,14 +19,14 @@ Qwen3-0.6B 是完整学习模型；Qwen3-4B 用于选择性验证；Qwen3-8B 只
 
 ## 当前进度
 
-当前处于 **M2：Qwen3-0.6B Math DPO**。M0、M1 已通过；M2 已完成数据构造、M1 adapter 初始化修复、10-step sanity 和一轮完整训练，尚未完成同口径评估与人工 sample diff 审阅。
+当前处于 **M2.5 准备：真实 RL sanity**。M0、M1 已通过；M2 DPO 已完成工程、评估与分支点归因，结论为“工程与诊断通过，风格迁移效果未通过”。当前停止新的 DPO 效果实验，先实现并验证真实 GRPO 链路。
 
 | 里程碑 | 内容 | 状态 | 当前结果 |
 |---|---|---|---|
 | M0 | 工程骨架与实验协议 | 已完成 | config、run registry、指标与硬件日志、文档模板、fake sanity 闭环已建立 |
 | M1 | Qwen3-0.6B Math SFT | 已完成 | GSM8K 500 条完整训练完成；pass@1 由 0.20 提升至 0.28；format adherence 由 0.06 提升至 1.00 |
-| M2 | Qwen3-0.6B Math DPO | 进行中 | 329 组 DPO pairs、M1 policy/reference 初始化、10-step sanity 和一轮完整训练已完成；等待评估与人工审阅 |
-| M2.5 | RL sanity | 未开始 | 等待 M2 完整验收 |
+| M2 | Qwen3-0.6B Math DPO | 已收口 | 训练、评估、风格对照、自由生成分支点诊断和 token 归因完成；工程与诊断通过，效果未通过 |
+| M2.5 | RL sanity | 准备中 | 真实 GRPO trainer、rollout、reward、logprob、KL、checkpoint 与 resume 尚待实现和验证 |
 | M3 | Qwen3-0.6B Math GRPO | 未开始 | 等待 rollout、reward、logprob、KL 链路验证 |
 | M4 及以后 | PPO、4B validation、Tool-call、OPD | 未开始 | 不阻塞 0.6B Math 核心闭环 |
 
@@ -40,16 +40,16 @@ M1 在 Qwen3-0.6B 上跑通了 GSM8K 数据准备、baseline eval、MLX/LoRA SFT
 
 **DPO v1（gold-vs-wrong）**：`data/math/splits/dpo_v1.jsonl`（329 组 pairs），`docs/format_notes/dpo_math_pair_protocol.md`，`scripts/train_dpo.py`。`runs/000033` 完成 10-step sanity，`runs/000034` 完整训练一轮。GSM8K-50 同口径评估：DPO 与 SFT 均为 14/50 pass\@1，格式遵从由 50/50 降为 48/50。完整分析见 `docs/experiment_notes/m2_math_dpo.md`。
 
-**DPO v2 style-controlled（数据与评估器已完成，训练未开始）**：500 条 style-preference pairs 经严格校验后分为 train 449 / stress 50 / quarantine 1。训练配置 `configs/qwen3_0_6b/dpo_v2_style.yaml` 与评估器 `scripts/eval_style_dpo.py` 已就绪。实验计划见 `docs/experiment_notes/m2_dpo_v2_style_plan.md`。
+**DPO style-controlled（已完成并暂停）**：v2、提高学习率的 v3、最小 style 差异的 v4 与 v4 4-epoch 均未在 Probe-30 或 Stress-50 上产生风格合规输出；同一 chosen 数据的 SFT control 则达到 Probe-30 30/30、Stress-50 49/50。`000051` 的全序列归因确认目标 token 的条件概率有提升，但自由生成分支点平均 rank 仍为 6913。完整收口结论见 `docs/experiment_notes/m2_dpo_closeout.md`。
 
-### M2 当前缺口
+### M2.5 当前工作
 
-进入 M2.5 前仍需完成以下工作：
+M2 已收口。真实 GRPO 前仍需完成以下工作：
 
-1. 补充 response-only logprob、next-token alignment 和 DPO loss 的数值回归测试。
-2. 完成同一测试集、prompt 协议与生成参数下的 baseline、SFT、DPO 比较。
-3. 人工审阅至少 20 条 SFT 与 DPO sample diff，检查长度偏差、模板化和模式坍缩。
-4. 完成 `docs/experiment_notes/m2_math_dpo.md` 与正式 run report。
+1. 写出可复算的 Math reward 协议，并实现答案解析、格式处理和无效输出处理。
+2. 实现真实 rollout、group-relative advantage、response-only logprob、reference KL 与训练更新。
+3. 对 reward、group 全对/全错、mask、KL、checkpoint 和 resume 建立测试与失败注入。
+4. 完成小样本真实 RL sanity，人工复算一组 rollout reward，再决定是否进入 M3。
 
 M2 的完整计划和通过条件见 `docs/Project_todo/M2.md`。
 
@@ -103,9 +103,10 @@ tail runs/000033_qwen3_0_6b_dpo_math/metrics/train_metrics.jsonl
 
 - `docs/tutorials/sft_to_dpo_review.md`：SFT 与 DPO 的原理、项目复盘、数据审核和代码审查练习。
 - `docs/tutorials/labs/README.md`：SFT、DPO、GRPO、OPD 的阶段作业、提交和批改门禁。
-- `docs/experiment_notes/m2_math_dpo.md`：M2 DPO sanity、正式训练和同口径评估记录。
+- `docs/experiment_notes/m2_dpo_closeout.md`：M2 DPO 的正式收口、效果边界、归因证据和 M2.5 交接。
+- `docs/experiment_notes/m2_math_dpo.md`：DPO v1 sanity、正式训练和同口径评估记录。
 - `docs/Project_todo/polaris_final_design.md`：项目目标、技术路线和完整里程碑。
 - `docs/Project_todo/M0.md`：工程骨架验收结论。
 - `docs/Project_todo/M1.md`：Math SFT 完整验收结论。
-- `docs/Project_todo/M2.md`：Math DPO 当前计划和通过条件。
-- `docs/Project_todo/Project_summary.md`：项目摘要；该文件仍需同步当前里程碑状态。
+- `docs/Project_todo/M2.md`：Math DPO 原始计划、通过条件与收口状态。
+- `docs/Project_todo/Project_summary.md`：已同步的项目摘要与当前里程碑状态。

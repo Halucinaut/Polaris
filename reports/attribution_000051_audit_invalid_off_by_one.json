@@ -1,0 +1,92 @@
+{
+  "description": "3 representative samples: worst/median/best policy-ref shift",
+  "samples": [
+    {
+      "problem_id": "gsm8k_train_d5_0234",
+      "chosen_response_tokens": 109,
+      "rejected_response_tokens": 94,
+      "raw_logprob_diff": -44.2691,
+      "ref_logprob_diff": -73.408,
+      "policy_ref_shift": 29.1389,
+      "total_margin": 3.4494,
+      "solution_contribution": 2.7421,
+      "solution_share": 0.7949,
+      "solution_analysis": {
+        "position_in_response": 2,
+        "absolute_position": 71,
+        "chosen_token_id": 36842,
+        "chosen_token_text": "Solution",
+        "rejected_token_id": 3966,
+        "rejected_token_text": "One",
+        "policy_chosen_lp": -1.5391,
+        "policy_rejected_lp": 0.0,
+        "ref_chosen_lp": -4.2812,
+        "ref_rejected_lp": 0.0,
+        "policy_gap": -1.5391,
+        "ref_gap": -4.2812,
+        "shift": 2.7421,
+        "policy_chosen_rank": 1,
+        "policy_chosen_greedy_gap": -1.2461
+      },
+      "divergence_position": 2
+    },
+    {
+      "problem_id": "gsm8k_train_d5_0461",
+      "chosen_response_tokens": 151,
+      "rejected_response_tokens": 137,
+      "raw_logprob_diff": -57.3734,
+      "ref_logprob_diff": -107.6165,
+      "policy_ref_shift": 50.2431,
+      "total_margin": 9.2607,
+      "solution_contribution": 0.688,
+      "solution_share": 0.0743,
+      "solution_analysis": {
+        "position_in_response": 2,
+        "absolute_position": 105,
+        "chosen_token_id": 36842,
+        "chosen_token_text": "Solution",
+        "rejected_token_id": 4854,
+        "rejected_token_text": "Each",
+        "policy_chosen_lp": -0.1245,
+        "policy_rejected_lp": -17.5,
+        "ref_chosen_lp": -1.3125,
+        "ref_rejected_lp": -18.0,
+        "policy_gap": 17.3755,
+        "ref_gap": 16.6875,
+        "shift": 0.688,
+        "policy_chosen_rank": 0,
+        "policy_chosen_greedy_gap": 0.0
+      },
+      "divergence_position": 2
+    },
+    {
+      "problem_id": "gsm8k_train_d5_0284",
+      "chosen_response_tokens": 87,
+      "rejected_response_tokens": 74,
+      "raw_logprob_diff": -47.9805,
+      "ref_logprob_diff": -122.7115,
+      "policy_ref_shift": 74.731,
+      "total_margin": 25.9771,
+      "solution_contribution": 4.3124,
+      "solution_share": 0.166,
+      "solution_analysis": {
+        "position_in_response": 2,
+        "absolute_position": 69,
+        "chosen_token_id": 36842,
+        "chosen_token_text": "Solution",
+        "rejected_token_id": 785,
+        "rejected_token_text": "The",
+        "policy_chosen_lp": -1.7188,
+        "policy_rejected_lp": 0.0,
+        "ref_chosen_lp": -6.0312,
+        "ref_rejected_lp": 0.0,
+        "policy_gap": -1.7188,
+        "ref_gap": -6.0312,
+        "shift": 4.3124,
+        "policy_chosen_rank": 2,
+        "policy_chosen_greedy_gap": -1.0
+      },
+      "divergence_position": 2
+    }
+  ]
+}
