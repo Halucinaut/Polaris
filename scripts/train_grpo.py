@@ -117,11 +117,6 @@ def validate_grpo_config(config: dict) -> list[str]:
             if key not in reward_cfg:
                 errors.append(f"Missing grpo.reward.{key}")
 
-    # Data path check
-    data_path = config.get("data", {}).get("path")
-    if data_path and not Path(data_path).exists():
-        errors.append(f"Data file not found: {data_path}")
-
     return errors
 
 
@@ -210,10 +205,21 @@ def dry_run(config: dict) -> int:
     else:
         print("  Config OK")
 
-    # 2. Data schema validation
-    print("\n[2/4] Validating data schema ...")
+    # 2. Data path & schema validation (BLOCKED if data file missing)
+    print("\n[2/4] Validating data path & schema ...")
     data_path = config.get("data", {}).get("path")
-    if data_path and Path(data_path).exists():
+    data_blocked = False
+    if not data_path:
+        msg = "No data.path in config"
+        all_errors.append(msg)
+        data_blocked = True
+        print(f"  BLOCKED: {msg}")
+    elif not Path(data_path).exists():
+        msg = f"Data file not found: {data_path}"
+        all_errors.append(msg)
+        data_blocked = True
+        print(f"  BLOCKED: {msg}")
+    else:
         try:
             records = load_json_record_stream(Path(data_path))
             max_samples = config.get("data", {}).get("max_samples")
@@ -231,11 +237,6 @@ def dry_run(config: dict) -> int:
         except Exception as e:
             all_errors.append(f"Data loading failed: {e}")
             print(f"  ERROR: {e}")
-    elif data_path:
-        print(f"  SKIPPED: Data file not found: {data_path}")
-        print("  (This is expected if the dataset has not been prepared yet)")
-    else:
-        print("  SKIPPED: No data.path in config")
 
     # 3. Reward protocol validation
     print("\n[3/4] Validating reward protocol ...")
@@ -411,47 +412,6 @@ def save_adapter_checkpoint(model, ckpt_dir: Path, lora_cfg: dict, lora_info: di
     }
 
 
-def save_resume_state(run_dir: Path, step: int, optimizer_state: dict, config_hash: str) -> Path:
-    """Save minimal resume metadata. Optimizer state handled by MLX separately."""
-    state = {
-        "step": step,
-        "config_hash": config_hash,
-        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-    }
-    state_path = run_dir / "checkpoints" / "resume_state.json"
-    state_path.parent.mkdir(parents=True, exist_ok=True)
-    with state_path.open("w", encoding="utf-8") as f:
-        json.dump(state, f, indent=2)
-    return state_path
-
-
-def load_resume_state(run_dir: Path) -> dict | None:
-    state_path = run_dir / "checkpoints" / "resume_state.json"
-    if not state_path.exists():
-        return None
-    with state_path.open("r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-def validate_resume(run_dir: Path, config: dict) -> int:
-    """Validate resume state compatibility. Returns step to resume from, or 0."""
-    state = load_resume_state(run_dir)
-    if state is None:
-        return 0
-
-    import hashlib
-    current_hash = hashlib.sha256(
-        json.dumps(config, sort_keys=True).encode()
-    ).hexdigest()[:16]
-
-    if state.get("config_hash") != current_hash:
-        raise ValueError(
-            f"Resume rejected: config hash mismatch. "
-            f"Checkpoint={state.get('config_hash')}, current={current_hash}"
-        )
-    return state.get("step", 0)
-
-
 # ---------------------------------------------------------------------------
 # Metric helpers
 # ---------------------------------------------------------------------------
@@ -483,7 +443,7 @@ def main() -> int:
     if args.dry_run:
         return dry_run(config)
 
-    # --- Real training path (below) ---
+    # --- Real training path (requires models + data) ---
     from polaris.monitoring.hardware import snapshot_hardware, append_hardware_log
     from polaris.monitoring.metrics import append_metric
     from polaris.registry import create_run, update_run_status
@@ -565,7 +525,7 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
     from mlx_lm import load as mlx_load
     from mlx.utils import tree_map
 
-    from polaris.trainers.grpo import compute_grpo_loss, compute_response_logprob
+    from polaris.trainers.grpo import compute_grpo_loss, compute_response_logprob, _compute_token_logprobs
 
     model_cfg = config.get("model", {})
     data_cfg = config.get("data", {})
@@ -598,16 +558,11 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
             "GRPO policy_adapter_path is required. M2.5 must start from the validated M1 SFT adapter."
         )
 
-    # Config hash for resume validation
+    # Config hash for provenance
     import hashlib
     config_hash = hashlib.sha256(
         json.dumps(config, sort_keys=True).encode()
     ).hexdigest()[:16]
-
-    # Resume check
-    resume_step = validate_resume(run_dir, config)
-    if resume_step > 0:
-        print(f"Resuming from step {resume_step}")
 
     mx.random.seed(seed)
 
@@ -650,9 +605,14 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
         "reference_base_model_path": str(ref_model_path),
         "reference_adapter_file": loaded_ref_adapter,
         "reference_frozen": True,
+        "reference_in_ratio": False,
+        "ratio_source": "current/old (rollout-frozen)",
+        "kl_source": "forward_kl(current, ref)",
         "response_logprob_reduction": "sum",
+        "old_logprob_capture": "per-token at rollout time",
         "group_size": group_size,
         "max_completion_length": max_completion_length,
+        "resume_supported": False,
     }
     provenance_path = run_dir / "logs" / "checkpoint_provenance.json"
     provenance_path.parent.mkdir(parents=True, exist_ok=True)
@@ -707,11 +667,12 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
     optimizer = optim.Adam(learning_rate=lr)
 
     # ------ GRPO loss function ------
-    def grpo_loss_fn(model, input_ids, response_mask, advantages, kl_coef_val, clip_range_val):
+    def grpo_loss_fn(model, input_ids, response_mask, advantages, kl_coef_val, clip_range_val, old_token_logprobs):
         return compute_grpo_loss(
             model, ref_model,
             input_ids, response_mask,
             advantages, kl_coef_val, clip_range_val,
+            old_token_logprobs=old_token_logprobs,
         )["loss"]
 
     loss_and_grad_fn = nn.value_and_grad(policy_model, grpo_loss_fn)
@@ -734,14 +695,11 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
     global_step = 0
     all_warnings: list[str] = []
 
-    policy_model.train()
     ref_model.eval()
 
     for epoch in range(num_epochs):
         for prompt_idx, prompt_data in enumerate(tokenized_prompts):
             global_step += 1
-            if global_step <= resume_step:
-                continue
             if max_steps is not None and global_step > max_steps:
                 break
 
@@ -749,37 +707,49 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
             ref_answer = prompt_data["reference_answer"]
             prompt_len = prompt_data["prompt_len"]
 
-            # ------ Rollout: sample group_size completions ------
+            # ------ Rollout phase: eval mode, sample completions ------
+            policy_model.eval()
+
             completions: list[str] = []
             completion_lengths: list[int] = []
             rollout_ids_list: list[list[int]] = []
+            rollout_old_token_lps: list[list[float]] = []
+            rollout_meta: list[dict] = []
 
-            for _ in range(group_size):
+            for comp_idx in range(group_size):
                 input_ids_list = prompt_ids.copy()
                 generated_ids: list[int] = []
                 max_gen = min(max_completion_length, max_seq_length - prompt_len)
+                per_token_lp: list[float] = []
+                termination = "max_length"
 
                 for _tok_pos in range(max_gen):
-                    import mlx.core as mx_local
-                    inp = mx_local.array([input_ids_list + generated_ids], dtype=mx_local.int32)
+                    inp = mx.array([input_ids_list + generated_ids], dtype=mx.int32)
                     logits = policy_model(inp)
+                    # Handle dict output (MLX modules may return dict)
+                    logits = logits["logits"] if isinstance(logits, dict) else logits
                     next_logits = logits[0, -1, :] / max(rollout_temperature, 1e-6)
 
                     # Top-p sampling
                     if rollout_top_p < 1.0:
-                        sorted_indices = mx_local.argsort(-next_logits)
+                        sorted_indices = mx.argsort(-next_logits)
                         sorted_logits = next_logits[sorted_indices]
-                        cumprobs = mx_local.cumsum(mx_local.softmax(sorted_logits, axis=-1))
+                        cumprobs = mx.cumsum(mx.softmax(sorted_logits, axis=-1))
                         mask = cumprobs > rollout_top_p
                         mask[0] = False  # keep at least one
-                        sorted_logits = mx_local.where(mask, float("-inf"), sorted_logits)
-                        next_logits = mx_local.zeros_like(next_logits)
+                        sorted_logits = mx.where(mask, float("-inf"), sorted_logits)
+                        next_logits = mx.zeros_like(next_logits)
                         next_logits[sorted_indices] = sorted_logits
 
-                    probs = mx_local.softmax(next_logits, axis=-1)
-                    next_id = int(mx_local.random.categorical(probs).item())
+                    probs = mx.softmax(next_logits, axis=-1)
+                    next_id = int(mx.random.categorical(probs).item())
+
+                    # Record old policy logprob for this token
+                    token_logprob = float(mx.log(probs[next_id]).item())
+                    per_token_lp.append(token_logprob)
 
                     if next_id == tokenizer.eos_token_id:
+                        termination = "eos"
                         break
                     generated_ids.append(next_id)
 
@@ -787,6 +757,13 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
                 completions.append(completion_text)
                 completion_lengths.append(len(generated_ids))
                 rollout_ids_list.append(prompt_ids + generated_ids)
+                rollout_old_token_lps.append(per_token_lp)
+                rollout_meta.append({
+                    "completion_idx": comp_idx,
+                    "response_token_count": len(generated_ids),
+                    "termination": termination,
+                    "seed": seed,
+                })
 
             # ------ Compute rewards ------
             rewards: list[float] = []
@@ -800,23 +777,31 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
             # ------ Group-relative advantage ------
             group_stats = compute_group_relative_advantage(rewards)
 
-            # ------ Build padded batch for training ------
+            # ------ Build padded batch ------
             max_len = max(len(ids) for ids in rollout_ids_list)
             pad_id = tokenizer.pad_token_id or 0
 
             batch_ids = []
             batch_masks = []
+            batch_old_lps = []
             for i, ids in enumerate(rollout_ids_list):
                 padded = ids + [pad_id] * (max_len - len(ids))
-                mask = [0.0] * prompt_len + [1.0] * len(ids[len(prompt_ids):]) + [0.0] * (max_len - len(ids))
+                resp_len = len(ids) - prompt_len
+                mask = [0.0] * prompt_len + [1.0] * resp_len + [0.0] * (max_len - len(ids))
+                # Pad old token logprobs: 0.0 for prompt, per-token lp for response, 0.0 for padding
+                old_lp = [0.0] * prompt_len + rollout_old_token_lps[i] + [0.0] * (max_len - len(ids))
                 batch_ids.append(padded)
                 batch_masks.append(mask)
+                batch_old_lps.append(old_lp)
 
             input_ids_arr = mx.array(batch_ids, dtype=mx.int32)
             response_mask_arr = mx.array(batch_masks, dtype=mx.float32)
+            old_token_lp_arr = mx.array(batch_old_lps, dtype=mx.float32)
             advantages_arr = mx.array(group_stats.advantages, dtype=mx.float32)
 
-            # ------ GRPO training step ------
+            # ------ GRPO training step: switch to train mode ------
+            policy_model.train()
+
             loss, grads = loss_and_grad_fn(
                 policy_model,
                 input_ids_arr,
@@ -824,6 +809,7 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
                 advantages_arr,
                 kl_coef,
                 clip_range,
+                old_token_lp_arr,
             )
 
             grad_norm = _grad_norm(grads)
@@ -831,11 +817,12 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
             mx.eval(policy_model.parameters(), optimizer.state)
             mx.clear_cache()
 
-            # ------ Compute detailed metrics ------
+            # ------ Compute detailed metrics (post-update, with old logprobs) ------
             detail = compute_grpo_loss(
                 policy_model, ref_model,
                 input_ids_arr, response_mask_arr,
                 advantages_arr, kl_coef, clip_range,
+                old_token_logprobs=old_token_lp_arr,
             )
 
             elapsed = time.time() - start_time
@@ -846,11 +833,13 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
                 "zero_variance_group_count": 1 if group_stats.zero_variance else 0,
                 "valid_advantage_count": sum(1 for a in group_stats.advantages if a != 0.0),
                 "policy_logprob": round(float(detail["policy_logprob"].item()), 6),
+                "old_policy_logprob": round(float(detail["old_policy_logprob"].item()), 6),
                 "ref_logprob": round(float(detail["ref_logprob"].item()), 6),
                 "KL": round(float(detail["kl"].item()), 6),
                 "entropy": round(float(detail["entropy"].item()), 6),
                 "loss": round(float(loss.item()), 6),
                 "completion_length": round(sum(completion_lengths) / len(completion_lengths), 1),
+                "response_token_count": sum(completion_lengths),
                 "invalid_output_rate": round(invalid_count / group_size, 4),
                 "grad_norm": round(grad_norm, 4) if grad_norm is not None else None,
                 "approx_kl": round(float(detail["approx_kl"].item()), 6),
@@ -869,10 +858,6 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
                     f"grad={grad_text}  {elapsed:.1f}s"
                 )
 
-            # ------ Periodic checkpoint ------
-            if global_step % 100 == 0:
-                save_resume_state(run_dir, global_step, {}, config_hash)
-
     train_time = time.time() - start_time
     print(f"\nTraining finished in {train_time:.1f}s")
 
@@ -880,7 +865,6 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
     ckpt_dir = run_dir / "checkpoints" / "final"
     ckpt_info = save_adapter_checkpoint(policy_model, ckpt_dir, lora_cfg, lora_info)
     print(f"Checkpoint saved: {ckpt_info['adapter_file']} ({ckpt_info['adapter_file_size']:,} bytes)")
-    save_resume_state(run_dir, global_step, {}, config_hash)
 
     # ------ Final summary ------
     if step_metrics_list:
