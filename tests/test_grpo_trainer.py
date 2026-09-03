@@ -8,6 +8,7 @@ import json
 import math
 import tempfile
 import unittest
+import unittest.mock
 from pathlib import Path
 
 
@@ -82,6 +83,29 @@ class TestValidateGrpoConfig(unittest.TestCase):
         errors = validate_grpo_config(config)
         # No data-path error expected; only grpo.* fields are validated
         self.assertFalse(any("data" in e.lower() or "not found" in e.lower() for e in errors))
+
+    def test_rollout_temperature_must_be_one(self):
+        """Non-1.0 temperature violates on-policy GRPO semantics."""
+        config = self._base_config()
+        config["grpo"]["rollout_temperature"] = 0.5
+        errors = validate_grpo_config(config)
+        self.assertTrue(any("temperature" in e.lower() and "1.0" in e for e in errors))
+
+    def test_rollout_top_p_must_be_one(self):
+        """Non-1.0 top_p violates on-policy GRPO semantics."""
+        config = self._base_config()
+        config["grpo"]["rollout_top_p"] = 0.9
+        errors = validate_grpo_config(config)
+        self.assertTrue(any("top_p" in e.lower() and "1.0" in e for e in errors))
+
+    def test_default_rollout_params_pass(self):
+        """Default config (temperature=1.0, top_p=1.0) passes validation."""
+        config = self._base_config()
+        errors = validate_grpo_config(config)
+        temp_errors = [e for e in errors if "temperature" in e.lower()]
+        top_p_errors = [e for e in errors if "top_p" in e.lower()]
+        self.assertEqual(temp_errors, [])
+        self.assertEqual(top_p_errors, [])
 
 
 # ---------------------------------------------------------------------------
@@ -272,14 +296,14 @@ class TestGRPOLossDeterminism(unittest.TestCase):
         return flat_lp[np.arange(B * T), flat_ids].reshape(B, T)
 
     def _manual_grpo_loss(
-        self, policy_logits, ref_logits, old_lp_shifted, input_ids,
+        self, policy_logits, ref_logits, old_lp_raw, input_ids,
         response_mask, advantages, kl_coef, clip_range,
     ):
         """Manual GRPO loss computation in numpy, mirroring grpo.py logic.
 
         Args:
-            old_lp_shifted: (B, T-1) old-token logprobs AFTER causal shift
-                and masking (i.e., already aligned with policy_token_lp).
+            old_lp_raw: (B, T-1) raw old-token logprobs (unshifted, unmasked).
+                Same causal-shift convention as policy: log P(ids[t+1] | logits[:,t,:]).
         """
         np = self.np
 
@@ -301,7 +325,7 @@ class TestGRPOLossDeterminism(unittest.TestCase):
 
         p_lp = raw_token_logprobs(p_logits, ids) * mask
         r_lp = raw_token_logprobs(r_logits, ids) * mask
-        old_lp = old_lp_shifted * mask
+        old_lp = old_lp_raw * mask
 
         # Summed logprobs
         policy_lp = p_lp.sum(axis=1)
@@ -339,11 +363,13 @@ class TestGRPOLossDeterminism(unittest.TestCase):
         entropy_per_token = -(p_probs * p_log_softmax).sum(axis=-1)
         mean_entropy = (entropy_per_token * mask).sum() / max(mask.sum(), 1.0)
 
-        # Approx KL (Schulman)
-        approx_kl = ((ratio - 1) - log_ratio).mean()
+        # Approx KL (Schulman) — response-only
+        approx_kl_raw = ((ratio - 1) - log_ratio) * mask
+        approx_kl = approx_kl_raw.sum() / max(mask.sum(), 1.0)
 
-        # Clip fraction
-        clip_frac = (np.abs(ratio - 1.0) > clip_range).mean()
+        # Clip fraction — response-only
+        clip_frac_raw = (np.abs(ratio - 1.0) > clip_range).astype(np.float32) * mask
+        clip_frac = clip_frac_raw.sum() / max(mask.sum(), 1.0)
 
         return {
             "loss": float(loss),
@@ -391,11 +417,11 @@ class TestGRPOLossDeterminism(unittest.TestCase):
         ids, mask, adv = self._default_inputs(B, T, V)
         logits = np.random.randn(B, T, V).astype(np.float32) * 0.5
 
-        # old == current: old_lp_shifted is the same as what compute_grpo_loss would get
-        old_lp_shifted = self._old_lp_from_logits(logits, ids)
+        # old == current: old_lp_raw is the same as what compute_grpo_loss would get
+        old_lp_raw = self._old_lp_from_logits(logits, ids)
 
         result = self._manual_grpo_loss(
-            logits, logits, old_lp_shifted, ids, mask, adv,
+            logits, logits, old_lp_raw, ids, mask, adv,
             kl_coef=0.0, clip_range=0.2,
         )
         self.assertAlmostEqual(result["approx_kl"], 0.0, places=5,
@@ -413,14 +439,14 @@ class TestGRPOLossDeterminism(unittest.TestCase):
         ref_logits_1 = np.random.randn(B, T, V).astype(np.float32) * 2.0
         ref_logits_2 = np.random.randn(B, T, V).astype(np.float32) * 0.1
 
-        old_lp_shifted = self._old_lp_from_logits(old_logits, ids)
+        old_lp_raw = self._old_lp_from_logits(old_logits, ids)
 
         r1 = self._manual_grpo_loss(
-            policy_logits, ref_logits_1, old_lp_shifted, ids, mask, adv,
+            policy_logits, ref_logits_1, old_lp_raw, ids, mask, adv,
             kl_coef=0.0, clip_range=0.2,
         )
         r2 = self._manual_grpo_loss(
-            policy_logits, ref_logits_2, old_lp_shifted, ids, mask, adv,
+            policy_logits, ref_logits_2, old_lp_raw, ids, mask, adv,
             kl_coef=0.0, clip_range=0.2,
         )
         self.assertAlmostEqual(r1["loss"], r2["loss"], places=5,
@@ -441,14 +467,14 @@ class TestGRPOLossDeterminism(unittest.TestCase):
         for t in range(T):
             old_logits[0, t, ids[0, t]] = 0.5
         ref_logits = np.zeros((B, T, V), dtype=np.float32)
-        old_lp_shifted = self._old_lp_from_logits(old_logits, ids)
+        old_lp_raw = self._old_lp_from_logits(old_logits, ids)
 
         pos_result = self._manual_grpo_loss(
-            policy_logits, ref_logits, old_lp_shifted, ids, mask,
+            policy_logits, ref_logits, old_lp_raw, ids, mask,
             np.array([2.0]), kl_coef=0.0, clip_range=0.2,
         )
         neg_result = self._manual_grpo_loss(
-            policy_logits, ref_logits, old_lp_shifted, ids, mask,
+            policy_logits, ref_logits, old_lp_raw, ids, mask,
             np.array([-2.0]), kl_coef=0.0, clip_range=0.2,
         )
         self.assertTrue(np.isfinite(pos_result["loss"]))
@@ -471,14 +497,14 @@ class TestGRPOLossDeterminism(unittest.TestCase):
 
         logits = np.random.randn(B, T, V).astype(np.float32) * 0.5
         ref = np.zeros((B, T, V), dtype=np.float32)
-        old_lp_shifted = self._old_lp_from_logits(logits, ids)
+        old_lp_raw = self._old_lp_from_logits(logits, ids)
 
         r1 = self._manual_grpo_loss(
-            logits, logits, old_lp_shifted, ids, mask1,
+            logits, logits, old_lp_raw, ids, mask1,
             np.array([1.0]), kl_coef=0.0, clip_range=0.2,
         )
         r2 = self._manual_grpo_loss(
-            logits, logits, old_lp_shifted, ids, mask2,
+            logits, logits, old_lp_raw, ids, mask2,
             np.array([1.0]), kl_coef=0.0, clip_range=0.2,
         )
         self.assertTrue(np.isfinite(r1["loss"]))
@@ -500,14 +526,14 @@ class TestGRPOLossDeterminism(unittest.TestCase):
         logits_b[0, 3, :] += 10.0
 
         ref = np.zeros((B, T, V), dtype=np.float32)
-        old_lp_shifted = self._old_lp_from_logits(logits_a, ids)
+        old_lp_raw = self._old_lp_from_logits(logits_a, ids)
 
         r_a = self._manual_grpo_loss(
-            logits_a, ref, old_lp_shifted, ids, mask,
+            logits_a, ref, old_lp_raw, ids, mask,
             np.array([1.0]), kl_coef=0.0, clip_range=0.2,
         )
         r_b = self._manual_grpo_loss(
-            logits_b, ref, old_lp_shifted, ids, mask,
+            logits_b, ref, old_lp_raw, ids, mask,
             np.array([1.0]), kl_coef=0.0, clip_range=0.2,
         )
         self.assertAlmostEqual(r_a["loss"], r_b["loss"], places=4,
@@ -521,11 +547,11 @@ class TestGRPOLossDeterminism(unittest.TestCase):
         mask = np.zeros((B, T), dtype=np.float32)
         mask[:, -3:] = 1.0
         logits = np.random.randn(B, T, V).astype(np.float32) * 0.5
-        old_lp_shifted = self._old_lp_from_logits(logits, ids)
+        old_lp_raw = self._old_lp_from_logits(logits, ids)
 
         zero_adv = np.zeros(B, dtype=np.float32)
         result = self._manual_grpo_loss(
-            logits, logits, old_lp_shifted, ids, mask, zero_adv,
+            logits, logits, old_lp_raw, ids, mask, zero_adv,
             kl_coef=0.1, clip_range=0.2,
         )
         self.assertFalse(math.isnan(result["loss"]), "Loss must not be NaN with zero-variance advantages")
@@ -542,14 +568,14 @@ class TestGRPOLossDeterminism(unittest.TestCase):
         policy_logits = np.random.randn(B, T, V).astype(np.float32) * 0.5
         old_logits = np.random.randn(B, T, V).astype(np.float32) * 0.3
         ref_logits = np.random.randn(B, T, V).astype(np.float32) * 1.0
-        old_lp_shifted = self._old_lp_from_logits(old_logits, ids)
+        old_lp_raw = self._old_lp_from_logits(old_logits, ids)
 
         r_low_kl = self._manual_grpo_loss(
-            policy_logits, ref_logits, old_lp_shifted, ids, mask, adv,
+            policy_logits, ref_logits, old_lp_raw, ids, mask, adv,
             kl_coef=0.0, clip_range=0.2,
         )
         r_high_kl = self._manual_grpo_loss(
-            policy_logits, ref_logits, old_lp_shifted, ids, mask, adv,
+            policy_logits, ref_logits, old_lp_raw, ids, mask, adv,
             kl_coef=1.0, clip_range=0.2,
         )
         self.assertAlmostEqual(r_low_kl["approx_kl"], r_high_kl["approx_kl"], places=5,
@@ -558,6 +584,85 @@ class TestGRPOLossDeterminism(unittest.TestCase):
                                msg="clip_fraction must be independent of kl_coef")
         self.assertNotAlmostEqual(r_low_kl["loss"], r_high_kl["loss"], places=3,
                                    msg="Total loss must differ when kl_coef changes")
+
+    # (g) Response-only metrics: approx_kl invariant to prompt/padding logits
+    def test_changing_prompt_logits_does_not_change_approx_kl(self):
+        """approx_kl must depend only on response-token positions."""
+        np = self.np
+        B, T, V = 2, 8, 6
+        ids, mask, adv = self._default_inputs(B, T, V, seed=101)
+        logits_a = np.random.randn(B, T, V).astype(np.float32) * 0.5
+        logits_b = logits_a.copy()
+        # Vary prompt and padding positions (non-response)
+        logits_b[:, :3, :] += 8.0
+        logits_b[:, 5:, :] += 8.0
+
+        old_logits = np.random.randn(B, T, V).astype(np.float32) * 0.3
+        old_lp_raw = self._old_lp_from_logits(old_logits, ids)
+        ref = np.zeros((B, T, V), dtype=np.float32)
+
+        r_a = self._manual_grpo_loss(
+            logits_a, ref, old_lp_raw, ids, mask, adv,
+            kl_coef=0.0, clip_range=0.2,
+        )
+        r_b = self._manual_grpo_loss(
+            logits_b, ref, old_lp_raw, ids, mask, adv,
+            kl_coef=0.0, clip_range=0.2,
+        )
+        self.assertAlmostEqual(r_a["approx_kl"], r_b["approx_kl"], places=5,
+                               msg="approx_kl must not change when prompt/padding logits change")
+
+    # (h) Response-only metrics: clip_fraction invariant to prompt/padding logits
+    def test_changing_prompt_logits_does_not_change_clip_fraction(self):
+        """clip_fraction must depend only on response-token positions."""
+        np = self.np
+        B, T, V = 2, 8, 6
+        ids, mask, adv = self._default_inputs(B, T, V, seed=202)
+        logits_a = np.random.randn(B, T, V).astype(np.float32) * 0.5
+        logits_b = logits_a.copy()
+        logits_b[:, :3, :] += 8.0
+        logits_b[:, 5:, :] += 8.0
+
+        old_logits = np.random.randn(B, T, V).astype(np.float32) * 0.3
+        old_lp_raw = self._old_lp_from_logits(old_logits, ids)
+        ref = np.zeros((B, T, V), dtype=np.float32)
+
+        r_a = self._manual_grpo_loss(
+            logits_a, ref, old_lp_raw, ids, mask, adv,
+            kl_coef=0.0, clip_range=0.2,
+        )
+        r_b = self._manual_grpo_loss(
+            logits_b, ref, old_lp_raw, ids, mask, adv,
+            kl_coef=0.0, clip_range=0.2,
+        )
+        self.assertAlmostEqual(r_a["clip_fraction"], r_b["clip_fraction"], places=5,
+                               msg="clip_fraction must not change when prompt/padding logits change")
+
+    # (i) Empty response mask → no NaN/Inf in response-only metrics
+    def test_empty_response_mask_no_nan(self):
+        """When response mask is empty, approx_kl and clip_fraction must not be NaN/Inf."""
+        np = self.np
+        B, T, V = 1, 6, 4
+        ids = np.array([[0, 1, 2, 3, 0, 1]])
+        mask = np.zeros((B, T), dtype=np.float32)  # all prompt/padding
+
+        logits = np.random.randn(B, T, V).astype(np.float32) * 0.5
+        old_logits = np.random.randn(B, T, V).astype(np.float32) * 0.3
+        old_lp_raw = self._old_lp_from_logits(old_logits, ids)
+        ref = np.zeros((B, T, V), dtype=np.float32)
+
+        result = self._manual_grpo_loss(
+            logits, ref, old_lp_raw, ids, mask,
+            np.array([1.0]), kl_coef=0.0, clip_range=0.2,
+        )
+        self.assertFalse(math.isnan(result["approx_kl"]),
+                         "approx_kl must not be NaN with empty response mask")
+        self.assertFalse(math.isinf(result["approx_kl"]),
+                         "approx_kl must not be Inf with empty response mask")
+        self.assertFalse(math.isnan(result["clip_fraction"]),
+                         "clip_fraction must not be NaN with empty response mask")
+        self.assertFalse(math.isinf(result["clip_fraction"]),
+                         "clip_fraction must not be Inf with empty response mask")
 
 
 # ---------------------------------------------------------------------------
@@ -693,6 +798,323 @@ class TestGRPOLossMLX(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
+# EOS handling and mixed-group batch construction tests
+# ---------------------------------------------------------------------------
+
+class TestEOSHandlingAndBatchConstruction(unittest.TestCase):
+    """Tests for EOS-as-response-action batch construction.
+
+    Verifies that input_ids, response_mask, and old_token_logprobs are
+    shape-consistent across mixed groups (EOS vs non-EOS completions).
+    """
+
+    def test_mixed_eos_noneos_group_batch_shapes(self):
+        """Mixed group: one EOS, one max-length. All batch arrays shape-consistent."""
+        import numpy as np
+
+        prompt_ids = [10, 11, 12]  # prompt_len = 3
+        prompt_len = len(prompt_ids)
+
+        # C1: 2 generated tokens + EOS → total 5 tokens
+        c1_ids = prompt_ids + [100, 101, 2]  # 2 is EOS
+        c1_old_lp = [-1.0, -0.8, -0.5]  # last is EOS logprob
+
+        # C2: 3 generated tokens, no EOS → total 6 tokens
+        c2_ids = prompt_ids + [200, 201, 202]
+        c2_old_lp = [-1.2, -0.9, -0.7]
+
+        rollout_ids = [c1_ids, c2_ids]
+        rollout_old_lps = [c1_old_lp, c2_old_lp]
+
+        class MockTokenizer:
+            pad_token_id = 0
+
+        ids, mask, old_lp = build_grpo_batch(
+            rollout_ids, rollout_old_lps, prompt_len, MockTokenizer(),
+        )
+
+        self.assertEqual(ids.shape, (2, 6))
+        self.assertEqual(mask.shape, (2, 6))
+        self.assertEqual(old_lp.shape, (2, 6))
+
+        # Prompt region masked out
+        np.testing.assert_array_equal(mask[0, :3], [0.0, 0.0, 0.0])
+        np.testing.assert_array_equal(mask[1, :3], [0.0, 0.0, 0.0])
+
+        # C1: 3 response tokens (2 + EOS)
+        np.testing.assert_array_equal(mask[0, 3:6], [1.0, 1.0, 1.0])
+        np.testing.assert_array_equal(mask[0, 6:], [])  # no padding for C1
+
+        # C2: 3 response tokens + 0 padding (same length as C1)
+        np.testing.assert_array_equal(mask[1, 3:6], [1.0, 1.0, 1.0])
+
+        # Old logprobs: non-zero only in response region
+        np.testing.assert_array_equal(old_lp[0, :3], [0.0, 0.0, 0.0])
+        self.assertAlmostEqual(old_lp[0, 3], -1.0)   # first response token
+        self.assertAlmostEqual(old_lp[0, 4], -0.8)   # second response token
+        self.assertAlmostEqual(old_lp[0, 5], -0.5)   # EOS logprob
+        np.testing.assert_array_equal(old_lp[1, :3], [0.0, 0.0, 0.0])
+        self.assertAlmostEqual(old_lp[1, 3], -1.2)
+        self.assertAlmostEqual(old_lp[1, 4], -0.9)
+        self.assertAlmostEqual(old_lp[1, 5], -0.7)
+
+    def test_eos_noneos_different_lengths_batch(self):
+        """EOS and non-EOS completions with different response lengths."""
+        import numpy as np
+
+        prompt_ids = [10, 11]
+        prompt_len = len(prompt_ids)
+
+        # C1: 1 token + EOS → 3 total
+        c1_ids = prompt_ids + [50, 2]
+        c1_old_lp = [-0.3, -0.6]
+
+        # C2: 4 tokens, no EOS → 6 total
+        c2_ids = prompt_ids + [60, 61, 62, 63]
+        c2_old_lp = [-0.4, -0.5, -0.6, -0.7]
+
+        class MockTokenizer:
+            pad_token_id = 0
+
+        ids, mask, old_lp = build_grpo_batch(
+            [c1_ids, c2_ids], [c1_old_lp, c2_old_lp], prompt_len, MockTokenizer(),
+        )
+
+        max_len = 6
+        self.assertEqual(ids.shape, (2, max_len))
+        self.assertEqual(mask.shape, (2, max_len))
+        self.assertEqual(old_lp.shape, (2, max_len))
+
+        # C1: 2 response tokens + 2 padding
+        np.testing.assert_array_equal(mask[0], [0.0, 0.0, 1.0, 1.0, 0.0, 0.0])
+        self.assertAlmostEqual(old_lp[0, 2], -0.3)
+        self.assertAlmostEqual(old_lp[0, 3], -0.6)  # EOS logprob
+        self.assertAlmostEqual(old_lp[0, 4], 0.0)    # padding
+        self.assertAlmostEqual(old_lp[0, 5], 0.0)    # padding
+
+        # C2: 4 response tokens + 0 padding
+        np.testing.assert_array_equal(mask[1], [0.0, 0.0, 1.0, 1.0, 1.0, 1.0])
+        self.assertAlmostEqual(old_lp[1, 2], -0.4)
+        self.assertAlmostEqual(old_lp[1, 3], -0.5)
+        self.assertAlmostEqual(old_lp[1, 4], -0.6)
+        self.assertAlmostEqual(old_lp[1, 5], -0.7)
+
+    def test_eos_noneos_old_lp_alignment_with_causal_shift(self):
+        """After causal shift, old_lp aligns with policy_token_lp positions."""
+        import numpy as np
+
+        prompt_ids = [10, 11, 12]
+        prompt_len = 3
+        c1_ids = prompt_ids + [100, 101, 2]  # EOS=2
+        c1_old_lp = [-1.0, -0.8, -0.5]
+        c2_ids = prompt_ids + [200, 201, 202]
+        c2_old_lp = [-1.2, -0.9, -0.7]
+
+        class MockTokenizer:
+            pad_token_id = 0
+
+        _, mask, old_lp = build_grpo_batch(
+            [c1_ids, c2_ids], [c1_old_lp, c2_old_lp], prompt_len, MockTokenizer(),
+        )
+
+        # Simulate causal shift (as done inside compute_grpo_loss)
+        shift_old = old_lp[:, 1:]
+        shift_mask = mask[:, 1:]
+        shifted_old = shift_old * shift_mask
+
+        # C1 shifted: positions [1,2,3,4,5] of old_lp after shift
+        # old_lp[0] = [0,0,0,-1.0,-0.8,-0.5]
+        # shift_old[0] = [0,0,-1.0,-0.8,-0.5]
+        # shift_mask[0] = [0,0,1,1,1] (from mask[0]=[0,0,0,1,1,1])
+        # shifted_old[0] = [0,0,-1.0,-0.8,-0.5]
+        self.assertAlmostEqual(shifted_old[0, 2], -1.0)  # EOS predicted from pos 4
+        self.assertAlmostEqual(shifted_old[0, 3], -0.8)
+        self.assertAlmostEqual(shifted_old[0, 4], -0.5)  # EOS logprob
+
+        # Verify alignment: shifted old has same shape as policy_token_lp would
+        self.assertEqual(shifted_old.shape, shift_mask.shape)
+
+    def test_eos_token_in_ids_sequence(self):
+        """Verify EOS token is present in input_ids (not stripped)."""
+        import numpy as np
+
+        prompt_ids = [10, 11]
+        prompt_len = 2
+        EOS_ID = 2
+
+        c1_ids = prompt_ids + [50, 51, EOS_ID]
+        c1_old_lp = [-0.3, -0.4, -0.6]
+        c2_ids = prompt_ids + [60, 61, 62]
+        c2_old_lp = [-0.5, -0.5, -0.5]
+
+        class MockTokenizer:
+            pad_token_id = 0
+
+        ids, _, _ = build_grpo_batch(
+            [c1_ids, c2_ids], [c1_old_lp, c2_old_lp], prompt_len, MockTokenizer(),
+        )
+
+        # EOS token present in C1's sequence
+        self.assertEqual(int(ids[0, 4]), EOS_ID)
+        # C2 has no EOS (token 62 is a regular token)
+        self.assertNotEqual(int(ids[1, 4]), EOS_ID)
+
+
+# ---------------------------------------------------------------------------
+# Preflight train validation tests
+# ---------------------------------------------------------------------------
+
+class TestPreflightTrain(unittest.TestCase):
+    """Tests for preflight_train: no side effects, no create_run."""
+
+    @staticmethod
+    def _valid_config(data_path: str = "/nonexistent/data.jsonl") -> dict:
+        return {
+            "data": {"path": data_path},
+            "lora": {"enabled": True, "dropout": 0.0, "r": 32, "alpha": 32},
+            "grpo": {
+                "policy_adapter_path": "/tmp/policy_adapter",
+                "ref_model_path": "/tmp/ref",
+                "ref_adapter_path": "/tmp/ref_adapter",
+                "group_size": 8,
+                "max_completion_length": 256,
+                "kl_coef": 0.05,
+                "clip_range": 0.2,
+                "rollout_temperature": 1.0,
+                "rollout_top_p": 1.0,
+                "reward": {
+                    "correct": 1.0, "incorrect": 0.0,
+                    "unparseable": -0.5, "empty": -1.0,
+                },
+            },
+        }
+
+    @unittest.mock.patch("scripts.train_grpo.resolve_adapter_file")
+    @unittest.mock.patch("scripts.train_grpo.load_json_record_stream")
+    @unittest.mock.patch("pathlib.Path.exists", return_value=True)
+    def test_temp_0_5_rejects_training(self, _mock_exists, mock_load, mock_resolve):
+        """temperature=0.5 must fail preflight."""
+        mock_resolve.return_value = Path("/tmp/fake.safetensors")
+        mock_load.return_value = [
+            {"messages": [{"role": "user", "content": "1+1?"}],
+             "metadata": {"answer": "2"}},
+        ]
+        config = self._valid_config()
+        config["grpo"]["rollout_temperature"] = 0.5
+        errors = preflight_train(config)
+        self.assertTrue(any("temperature" in e.lower() for e in errors))
+
+    @unittest.mock.patch("scripts.train_grpo.resolve_adapter_file")
+    def test_data_missing_rejects_training(self, mock_resolve):
+        """Missing data file must fail preflight."""
+        mock_resolve.return_value = Path("/tmp/fake.safetensors")
+        config = self._valid_config("/nonexistent/missing_data.jsonl")
+        errors = preflight_train(config)
+        self.assertTrue(any("data" in e.lower() and "not found" in e.lower() for e in errors))
+
+    @unittest.mock.patch("scripts.train_grpo.resolve_adapter_file")
+    @unittest.mock.patch("scripts.train_grpo.load_json_record_stream")
+    @unittest.mock.patch("pathlib.Path.exists", return_value=True)
+    def test_group_size_1_rejects(self, _mock_exists, mock_load, mock_resolve):
+        """group_size=1 must fail preflight (need >= 2 for group-relative advantage)."""
+        mock_resolve.return_value = Path("/tmp/fake.safetensors")
+        mock_load.return_value = [
+            {"messages": [{"role": "user", "content": "1+1?"}],
+             "metadata": {"answer": "2"}},
+        ]
+        config = self._valid_config()
+        config["grpo"]["group_size"] = 1
+        errors = preflight_train(config)
+        self.assertTrue(any("group_size" in e and ">= 2" in e for e in errors))
+
+    @unittest.mock.patch("scripts.train_grpo.resolve_adapter_file")
+    @unittest.mock.patch("scripts.train_grpo.load_json_record_stream")
+    @unittest.mock.patch("pathlib.Path.exists", return_value=True)
+    def test_lora_dropout_nonzero_rejects(self, _mock_exists, mock_load, mock_resolve):
+        """lora.dropout=0.1 must fail preflight (eval/train distribution mismatch)."""
+        mock_resolve.return_value = Path("/tmp/fake.safetensors")
+        mock_load.return_value = [
+            {"messages": [{"role": "user", "content": "1+1?"}],
+             "metadata": {"answer": "2"}},
+        ]
+        config = self._valid_config()
+        config["lora"]["dropout"] = 0.1
+        errors = preflight_train(config)
+        self.assertTrue(any("dropout" in e and "0.0" in e for e in errors))
+
+    @unittest.mock.patch("scripts.train_grpo.resolve_adapter_file")
+    @unittest.mock.patch("scripts.train_grpo.load_json_record_stream")
+    @unittest.mock.patch("pathlib.Path.exists", return_value=True)
+    def test_adapter_not_found_rejects(self, _mock_exists, mock_load, mock_resolve):
+        """Missing adapter file must fail preflight."""
+        mock_resolve.side_effect = FileNotFoundError("LoRA adapter weights not found: /tmp/missing")
+        mock_load.return_value = [
+            {"messages": [{"role": "user", "content": "1+1?"}],
+             "metadata": {"answer": "2"}},
+        ]
+        config = self._valid_config()
+        errors = preflight_train(config)
+        self.assertTrue(any("adapter" in e.lower() and "not found" in e.lower() for e in errors))
+
+    @unittest.mock.patch("scripts.train_grpo.resolve_adapter_file")
+    @unittest.mock.patch("scripts.train_grpo.load_json_record_stream")
+    @unittest.mock.patch("pathlib.Path.exists", return_value=True)
+    def test_valid_config_passes_preflight(self, _mock_exists, mock_load, mock_resolve):
+        """Valid config, data, adapters, group_size, dropout all pass."""
+        mock_resolve.return_value = Path("/tmp/fake.safetensors")
+        mock_load.return_value = [
+            {"messages": [{"role": "user", "content": "1+1?"}],
+             "metadata": {"answer": "2"}},
+        ]
+        errors = preflight_train(self._valid_config())
+        self.assertEqual(errors, [], f"Expected no errors, got: {errors}")
+
+
+# ---------------------------------------------------------------------------
+# Batch input validation tests
+# ---------------------------------------------------------------------------
+
+class TestBatchInputValidation(unittest.TestCase):
+    """Tests for build_grpo_batch input length validation."""
+
+    def test_mismatched_old_lp_length_raises(self):
+        """ValueError when old_token_logprobs length != response length."""
+        prompt_ids = [10, 11, 12]
+        prompt_len = 3
+
+        # seq_len=6, response_len=3, but old_lp has 2 entries (should be 3)
+        rollout_ids = [prompt_ids + [100, 101, 102]]
+        rollout_old_lps = [[-1.0, -0.8]]  # wrong: 2 instead of 3
+
+        class MockTokenizer:
+            pad_token_id = 0
+
+        with self.assertRaises(ValueError) as ctx:
+            build_grpo_batch(rollout_ids, rollout_old_lps, prompt_len, MockTokenizer())
+
+        err = str(ctx.exception)
+        self.assertIn("Sample 0", err)
+        self.assertIn("2", err)   # actual old_lp length
+        self.assertIn("3", err)   # expected response length
+
+    def test_valid_lengths_pass(self):
+        """No error when old_token_logprobs length matches response length."""
+        prompt_ids = [10, 11]
+        prompt_len = 2
+
+        rollout_ids = [prompt_ids + [100, 101, 102]]
+        rollout_old_lps = [[-1.0, -0.8, -0.5]]  # 3 = 5 - 2
+
+        class MockTokenizer:
+            pad_token_id = 0
+
+        ids, mask, old_lp = build_grpo_batch(
+            rollout_ids, rollout_old_lps, prompt_len, MockTokenizer(),
+        )
+        self.assertEqual(ids.shape[0], 1)
+
+
+# ---------------------------------------------------------------------------
 # Imports (placed at end to avoid circular imports at module level)
 # ---------------------------------------------------------------------------
 
@@ -701,6 +1123,8 @@ from scripts.train_grpo import (
     validate_data_schema,
     validate_reward_protocol,
     dry_run,
+    build_grpo_batch,
+    preflight_train,
 )
 
 

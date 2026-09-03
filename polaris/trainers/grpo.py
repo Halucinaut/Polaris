@@ -135,17 +135,16 @@ def compute_grpo_loss(
     policy_token_lp = _compute_token_logprobs(policy_logits, input_ids, response_mask)
     ref_token_lp = _compute_token_logprobs(ref_logits, input_ids, response_mask)
 
+    # ---- Shifted response mask (used throughout) ----
+    shift_mask = response_mask[:, 1:]
+
     if old_token_logprobs is not None:
-        # old_token_logprobs: (B, T) pre-shift-aligned; shift and mask to match
-        shift_old = old_token_logprobs[:, 1:]
-        shift_mask = response_mask[:, 1:]
-        old_token_lp = shift_old * shift_mask
+        # old_token_logprobs: (B, T) raw per-token logprobs from rollout;
+        # apply same causal shift and mask as policy/ref so positions align.
+        old_token_lp = old_token_logprobs[:, 1:] * shift_mask
     else:
         # Before any gradient update, old == current
         old_token_lp = policy_token_lp
-
-    # ---- Shifted response mask ----
-    shift_mask = response_mask[:, 1:]
 
     # ---- Response logprobs (summed, per-sample) ----
     policy_lp = policy_token_lp.sum(axis=1)
@@ -188,10 +187,12 @@ def compute_grpo_loss(
     mean_entropy = (entropy_per_token * shift_mask).sum() / mx.maximum(shift_mask.sum(), 1.0)
 
     # ---- Approximate KL for logging (Schulman blog: (r-1) - log r) ----
-    approx_kl = ((ratio - 1) - log_ratio).mean()
+    approx_kl = ((ratio - 1) - log_ratio) * shift_mask
+    approx_kl = approx_kl.sum() / mx.maximum(shift_mask.sum(), 1.0)
 
-    # ---- Clip fraction ----
-    clip_frac = (mx.abs(ratio - 1.0) > clip_range).astype(mx.float32).mean()
+    # ---- Clip fraction (response-only) ----
+    clip_frac = (mx.abs(ratio - 1.0) > clip_range).astype(mx.float32) * shift_mask
+    clip_frac = clip_frac.sum() / mx.maximum(shift_mask.sum(), 1.0)
 
     return {
         "loss": loss,

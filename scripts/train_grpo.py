@@ -68,6 +68,11 @@ def parse_args() -> argparse.Namespace:
                    help="Runs root directory")
     p.add_argument("--max-steps", type=int, default=None,
                    help="Override max training steps")
+    p.add_argument("--mode", type=str, default="dry-run",
+                   choices=["dry-run", "train"],
+                   help="Execution mode: dry-run (default) or train")
+    p.add_argument("--confirm-real-training", action="store_true",
+                   help="Required with --mode train to confirm real model training")
     return p.parse_args()
 
 
@@ -108,6 +113,18 @@ def validate_grpo_config(config: dict) -> list[str]:
     temp = grpo_cfg.get("rollout_temperature", 1.0)
     if not isinstance(temp, (int, float)) or temp <= 0:
         errors.append(f"grpo.rollout_temperature must be positive, got {temp}")
+    elif temp != 1.0:
+        errors.append(
+            f"grpo.rollout_temperature must be 1.0 for on-policy GRPO, got {temp}"
+        )
+
+    top_p = grpo_cfg.get("rollout_top_p", 1.0)
+    if not isinstance(top_p, (int, float)) or top_p <= 0 or top_p > 1:
+        errors.append(f"grpo.rollout_top_p must be in (0, 1], got {top_p}")
+    elif top_p != 1.0:
+        errors.append(
+            f"grpo.rollout_top_p must be 1.0 for on-policy GRPO, got {top_p}"
+        )
 
     reward_cfg = grpo_cfg.get("reward", {})
     if not isinstance(reward_cfg, dict):
@@ -186,6 +203,75 @@ def validate_reward_protocol(reward_config: dict) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
+# Preflight validation
+# ---------------------------------------------------------------------------
+
+def preflight_config_and_data(config: dict) -> tuple[list[str], list[dict] | None]:
+    """Validate GRPO config and data path/schema. No side effects.
+
+    Returns (errors, records_or_None).
+    """
+    errors = validate_grpo_config(config)
+
+    data_path = config.get("data", {}).get("path")
+    if not data_path:
+        errors.append("BLOCKED: No data.path in config")
+        return errors, None
+    if not Path(data_path).exists():
+        errors.append(f"BLOCKED: Data file not found: {data_path}")
+        return errors, None
+
+    try:
+        records = load_json_record_stream(Path(data_path))
+    except Exception as exc:
+        errors.append(f"Data loading failed: {exc}")
+        return errors, None
+
+    schema_errors = validate_data_schema(records)
+    errors.extend(schema_errors)
+    return errors, records
+
+
+def preflight_train(config: dict) -> list[str]:
+    """Full preflight for train mode. No side effects.
+
+    Validates config, data, adapter paths, group_size, lora.dropout.
+    Must run before create_run, lock, model loading, or hardware snapshot.
+    """
+    errors, _records = preflight_config_and_data(config)
+    grpo_cfg = config.get("grpo", {})
+    lora_cfg = config.get("lora", {})
+
+    # Adapter paths must resolve to existing safetensors files
+    for key in ["policy_adapter_path", "ref_adapter_path"]:
+        adapter_path = grpo_cfg.get(key)
+        if not adapter_path:
+            continue
+        try:
+            resolve_adapter_file(adapter_path)
+        except FileNotFoundError as exc:
+            errors.append(f"BLOCKED: {key}: {exc}")
+        except ValueError as exc:
+            errors.append(f"ERROR: {key}: {exc}")
+
+    # group_size >= 2 (need at least 2 completions for group-relative advantage)
+    gs = grpo_cfg.get("group_size")
+    if gs is not None and isinstance(gs, int) and gs < 2:
+        errors.append(f"ERROR: grpo.group_size must be >= 2 for GRPO, got {gs}")
+
+    # lora.dropout must be 0.0 for M2.5:
+    # dropout during rollout (eval) and training would create distribution mismatch
+    dropout = lora_cfg.get("dropout", 0.0)
+    if dropout != 0.0:
+        errors.append(
+            f"ERROR: lora.dropout must be 0.0 for M2.5 GRPO "
+            f"(rollout eval/train distribution must match), got {dropout}"
+        )
+
+    return errors
+
+
+# ---------------------------------------------------------------------------
 # Dry-run
 # ---------------------------------------------------------------------------
 
@@ -195,9 +281,12 @@ def dry_run(config: dict) -> int:
 
     all_errors: list[str] = []
 
-    # 1. Config validation
+    # 1-2. Config + data path & schema (shared preflight)
     print("[1/4] Validating GRPO config ...")
+    preflight_errors, records = preflight_config_and_data(config)
     config_errors = validate_grpo_config(config)
+    data_errors = [e for e in preflight_errors if e not in config_errors]
+
     if config_errors:
         all_errors.extend(config_errors)
         for e in config_errors:
@@ -205,38 +294,15 @@ def dry_run(config: dict) -> int:
     else:
         print("  Config OK")
 
-    # 2. Data path & schema validation (BLOCKED if data file missing)
     print("\n[2/4] Validating data path & schema ...")
-    data_path = config.get("data", {}).get("path")
-    data_blocked = False
-    if not data_path:
-        msg = "No data.path in config"
-        all_errors.append(msg)
-        data_blocked = True
-        print(f"  BLOCKED: {msg}")
-    elif not Path(data_path).exists():
-        msg = f"Data file not found: {data_path}"
-        all_errors.append(msg)
-        data_blocked = True
-        print(f"  BLOCKED: {msg}")
-    else:
-        try:
-            records = load_json_record_stream(Path(data_path))
-            max_samples = config.get("data", {}).get("max_samples")
-            if max_samples:
-                records = records[:max_samples]
-            schema_errors = validate_data_schema(records)
-            if schema_errors:
-                all_errors.extend(schema_errors)
-                for e in schema_errors:
-                    print(f"  ERROR: {e}")
-            else:
-                print(f"  Data OK: {len(records)} records, schema valid")
-                print(f"  Sample problem_id: {records[0].get('metadata', {}).get('problem_id', 'N/A')}")
-                print(f"  Sample answer: {records[0].get('metadata', {}).get('answer', 'N/A')[:50]}")
-        except Exception as e:
-            all_errors.append(f"Data loading failed: {e}")
-            print(f"  ERROR: {e}")
+    if data_errors:
+        all_errors.extend(data_errors)
+        for e in data_errors:
+            print(f"  {e}")
+    elif records is not None:
+        print(f"  Data OK: {len(records)} records, schema valid")
+        print(f"  Sample problem_id: {records[0].get('metadata', {}).get('problem_id', 'N/A')}")
+        print(f"  Sample answer: {records[0].get('metadata', {}).get('answer', 'N/A')[:50]}")
 
     # 3. Reward protocol validation
     print("\n[3/4] Validating reward protocol ...")
@@ -413,6 +479,59 @@ def save_adapter_checkpoint(model, ckpt_dir: Path, lora_cfg: dict, lora_info: di
 
 
 # ---------------------------------------------------------------------------
+# Batch construction
+# ---------------------------------------------------------------------------
+
+def build_grpo_batch(rollout_ids_list, rollout_old_token_lps, prompt_len, tokenizer):
+    """Build padded batch tensors from rollout completions.
+
+    Handles EOS-inclusive sequences: EOS token is part of generated_ids and
+    its old logprob is stored in rollout_old_token_lps at the same index.
+
+    Returns:
+        (input_ids, response_mask, old_token_logprobs_raw) as numpy arrays.
+        - input_ids: (B, max_len) int32
+        - response_mask: (B, max_len) float32, 1.0 for response tokens
+        - old_token_logprobs_raw: (B, max_len) float32, raw per-token logprobs
+          (prompt positions are 0.0; causal shift applied inside compute_grpo_loss)
+    """
+    import numpy as np
+
+    # Validate input consistency
+    for i, (ids, old_lps) in enumerate(zip(rollout_ids_list, rollout_old_token_lps)):
+        expected = len(ids) - prompt_len
+        if len(old_lps) != expected:
+            raise ValueError(
+                f"Sample {i}: old_token_logprobs length {len(old_lps)} "
+                f"!= response length {expected} "
+                f"(seq_len={len(ids)}, prompt_len={prompt_len})"
+            )
+
+    max_len = max(len(ids) for ids in rollout_ids_list)
+    pad_id = tokenizer.pad_token_id or 0
+
+    batch_ids = []
+    batch_masks = []
+    batch_old_lps = []
+    for i, ids in enumerate(rollout_ids_list):
+        seq_len = len(ids)
+        resp_len = seq_len - prompt_len
+        padded = ids + [pad_id] * (max_len - seq_len)
+        mask = [0.0] * prompt_len + [1.0] * resp_len + [0.0] * (max_len - seq_len)
+        # old lp: 0.0 for prompt + per-token lp for response (incl. EOS) + 0.0 for padding
+        old_lp = [0.0] * prompt_len + list(rollout_old_token_lps[i]) + [0.0] * (max_len - seq_len)
+        batch_ids.append(padded)
+        batch_masks.append(mask)
+        batch_old_lps.append(old_lp)
+
+    return (
+        np.array(batch_ids, dtype=np.int32),
+        np.array(batch_masks, dtype=np.float32),
+        np.array(batch_old_lps, dtype=np.float32),
+    )
+
+
+# ---------------------------------------------------------------------------
 # Metric helpers
 # ---------------------------------------------------------------------------
 
@@ -440,8 +559,21 @@ def main() -> int:
     if args.max_steps is not None:
         config.setdefault("training", {})["max_steps"] = args.max_steps
 
-    if args.dry_run:
+    if args.dry_run or args.mode == "dry-run":
         return dry_run(config)
+
+    if not (args.mode == "train" and args.confirm_real_training):
+        print("ERROR: Real training requires both --mode train and --confirm-real-training.")
+        print("  Example: python scripts/train_grpo.py --mode train --confirm-real-training --config ...")
+        return 1
+
+    # Preflight: validate all config, data, adapters before any side effects
+    preflight_errors = preflight_train(config)
+    if preflight_errors:
+        print("PREFLIGHT FAILED:")
+        for e in preflight_errors:
+            print(f"  {e}")
+        return 1
 
     # --- Real training path (requires models + data) ---
     from polaris.monitoring.hardware import snapshot_hardware, append_hardware_log
@@ -748,12 +880,12 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
                     token_logprob = float(mx.log(probs[next_id]).item())
                     per_token_lp.append(token_logprob)
 
+                    generated_ids.append(next_id)
                     if next_id == tokenizer.eos_token_id:
                         termination = "eos"
                         break
-                    generated_ids.append(next_id)
 
-                completion_text = tokenizer.decode(generated_ids)
+                completion_text = tokenizer.decode(generated_ids, skip_special_tokens=True)
                 completions.append(completion_text)
                 completion_lengths.append(len(generated_ids))
                 rollout_ids_list.append(prompt_ids + generated_ids)
@@ -778,25 +910,12 @@ def _run_training(config: dict, run_dir: Path, args) -> str:
             group_stats = compute_group_relative_advantage(rewards)
 
             # ------ Build padded batch ------
-            max_len = max(len(ids) for ids in rollout_ids_list)
-            pad_id = tokenizer.pad_token_id or 0
-
-            batch_ids = []
-            batch_masks = []
-            batch_old_lps = []
-            for i, ids in enumerate(rollout_ids_list):
-                padded = ids + [pad_id] * (max_len - len(ids))
-                resp_len = len(ids) - prompt_len
-                mask = [0.0] * prompt_len + [1.0] * resp_len + [0.0] * (max_len - len(ids))
-                # Pad old token logprobs: 0.0 for prompt, per-token lp for response, 0.0 for padding
-                old_lp = [0.0] * prompt_len + rollout_old_token_lps[i] + [0.0] * (max_len - len(ids))
-                batch_ids.append(padded)
-                batch_masks.append(mask)
-                batch_old_lps.append(old_lp)
-
-            input_ids_arr = mx.array(batch_ids, dtype=mx.int32)
-            response_mask_arr = mx.array(batch_masks, dtype=mx.float32)
-            old_token_lp_arr = mx.array(batch_old_lps, dtype=mx.float32)
+            batch_ids_np, batch_masks_np, batch_old_lps_np = build_grpo_batch(
+                rollout_ids_list, rollout_old_token_lps, prompt_len, tokenizer,
+            )
+            input_ids_arr = mx.array(batch_ids_np, dtype=mx.int32)
+            response_mask_arr = mx.array(batch_masks_np, dtype=mx.float32)
+            old_token_lp_arr = mx.array(batch_old_lps_np, dtype=mx.float32)
             advantages_arr = mx.array(group_stats.advantages, dtype=mx.float32)
 
             # ------ GRPO training step: switch to train mode ------

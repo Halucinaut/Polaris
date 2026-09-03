@@ -1,0 +1,2513 @@
+{
+  "files": [
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/gsm8k/train.jsonl",
+      "record_count": 7473,
+      "top_level_keys_sample": [
+        "answer",
+        "question"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": false,
+      "problem_id_source": "none",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": false,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 7473,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 7473,
+          "missing metadata.answer": 7473
+        }
+      },
+      "convertible_to_grpo": true,
+      "conversion_note": "Requires conversion: wrap question in messages, extract answer from #### format into metadata.answer",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/gsm8k/test.jsonl",
+      "record_count": 1319,
+      "top_level_keys_sample": [
+        "answer",
+        "question"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": false,
+      "problem_id_source": "none",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": false,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 1319,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 1319,
+          "missing metadata.answer": 1319
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/gsm8k/split/train.jsonl",
+      "record_count": 210,
+      "top_level_keys_sample": [
+        "answer",
+        "question"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": false,
+      "problem_id_source": "none",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": false,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 210,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 210,
+          "missing metadata.answer": 210
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/gsm8k/split/test.jsonl",
+      "record_count": 30,
+      "top_level_keys_sample": [
+        "answer",
+        "question"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": false,
+      "problem_id_source": "none",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": false,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 30,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 30,
+          "missing metadata.answer": 30
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/gsm8k/split/val.jsonl",
+      "record_count": 30,
+      "top_level_keys_sample": [
+        "answer",
+        "question"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": false,
+      "problem_id_source": "none",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": false,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 30,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 30,
+          "missing metadata.answer": 30
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/gsm8k/split/review.jsonl",
+      "record_count": 30,
+      "top_level_keys_sample": [
+        "answer",
+        "question"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": false,
+      "problem_id_source": "none",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": false,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 30,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 30,
+          "missing metadata.answer": 30
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/gsm8k/split/train_converted.jsonl",
+      "record_count": 210,
+      "top_level_keys_sample": [
+        "answer",
+        "domain",
+        "problem",
+        "problem_id",
+        "solution",
+        "source",
+        "split"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 210,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 210,
+          "missing metadata.answer": 210
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/gsm8k/split/test_converted.jsonl",
+      "record_count": 30,
+      "top_level_keys_sample": [
+        "answer",
+        "domain",
+        "problem",
+        "problem_id",
+        "solution",
+        "source",
+        "split"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 30,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 30,
+          "missing metadata.answer": 30
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/gsm8k/split/val_converted.jsonl",
+      "record_count": 30,
+      "top_level_keys_sample": [
+        "answer",
+        "domain",
+        "problem",
+        "problem_id",
+        "solution",
+        "source",
+        "split"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 30,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 30,
+          "missing metadata.answer": 30
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/gsm8k/split/review_converted.jsonl",
+      "record_count": 30,
+      "top_level_keys_sample": [
+        "answer",
+        "domain",
+        "problem",
+        "problem_id",
+        "solution",
+        "source",
+        "split"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 30,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 30,
+          "missing metadata.answer": 30
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/gsm8k/split/train_converted_d5_500.jsonl",
+      "record_count": 500,
+      "top_level_keys_sample": [
+        "answer",
+        "domain",
+        "problem",
+        "problem_id",
+        "solution",
+        "source",
+        "split"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 500,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 500,
+          "missing metadata.answer": 500
+        }
+      },
+      "convertible_to_grpo": true,
+      "conversion_note": "Requires conversion: wrap problem in messages, move answer into metadata.answer",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/gsm8k/split/test_converted_500.jsonl",
+      "record_count": 500,
+      "top_level_keys_sample": [
+        "answer",
+        "domain",
+        "problem",
+        "problem_id",
+        "solution",
+        "source",
+        "split"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 500,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 500,
+          "missing metadata.answer": 500
+        }
+      },
+      "convertible_to_grpo": true,
+      "conversion_note": "Requires conversion: wrap problem in messages, move answer into metadata.answer",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/splits/sft_v1.jsonl",
+      "record_count": 300,
+      "top_level_keys_sample": [
+        "messages",
+        "metadata",
+        "target"
+      ],
+      "has_messages": true,
+      "has_metadata_answer": true,
+      "has_problem_id": true,
+      "problem_id_source": "metadata",
+      "has_answer": true,
+      "answer_source": "metadata",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": true,
+      "grpo_schema": {
+        "valid_count": 300,
+        "invalid_count": 0,
+        "invalid_reasons": {}
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/splits/sft_d5_500.jsonl",
+      "record_count": 500,
+      "top_level_keys_sample": [
+        "messages",
+        "metadata",
+        "target"
+      ],
+      "has_messages": true,
+      "has_metadata_answer": true,
+      "has_problem_id": true,
+      "problem_id_source": "metadata",
+      "has_answer": true,
+      "answer_source": "metadata",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": true,
+      "grpo_schema": {
+        "valid_count": 500,
+        "invalid_count": 0,
+        "invalid_reasons": {}
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/splits/sft_v2_style_control_train_449.jsonl",
+      "record_count": 449,
+      "top_level_keys_sample": [
+        "messages",
+        "metadata",
+        "target"
+      ],
+      "has_messages": true,
+      "has_metadata_answer": true,
+      "has_problem_id": true,
+      "problem_id_source": "metadata",
+      "has_answer": true,
+      "answer_source": "metadata",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": true,
+      "grpo_schema": {
+        "valid_count": 449,
+        "invalid_count": 0,
+        "invalid_reasons": {}
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/splits/dpo_v1.jsonl",
+      "record_count": 329,
+      "top_level_keys_sample": [
+        "answer",
+        "chosen",
+        "id",
+        "messages",
+        "metadata",
+        "pair_type",
+        "quality_tag",
+        "rejected",
+        "source"
+      ],
+      "has_messages": true,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "metadata",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 329,
+        "invalid_reasons": {
+          "missing metadata.answer": 329
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/splits/dpo_v2_style_train_449.jsonl",
+      "record_count": 449,
+      "top_level_keys_sample": [
+        "answer",
+        "chosen",
+        "id",
+        "messages",
+        "metadata",
+        "pair_type",
+        "quality_tag",
+        "rejected"
+      ],
+      "has_messages": true,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "metadata",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": false,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 449,
+        "invalid_reasons": {
+          "missing metadata.answer": 449
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/splits/dpo_v2_style_stress_50.jsonl",
+      "record_count": 50,
+      "top_level_keys_sample": [
+        "answer",
+        "chosen",
+        "id",
+        "messages",
+        "metadata",
+        "pair_type",
+        "quality_tag",
+        "rejected"
+      ],
+      "has_messages": true,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "metadata",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": false,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 50,
+        "invalid_reasons": {
+          "missing metadata.answer": 50
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/splits/dpo_v2_style_stress_eval_50.jsonl",
+      "record_count": 50,
+      "top_level_keys_sample": [
+        "answer",
+        "problem",
+        "problem_id",
+        "source"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 50,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 50,
+          "missing metadata.answer": 50
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/splits/dpo_candidates.jsonl",
+      "record_count": 329,
+      "top_level_keys_sample": [
+        "answer",
+        "chosen",
+        "id",
+        "messages",
+        "metadata",
+        "pair_type",
+        "quality_tag",
+        "rejected",
+        "source"
+      ],
+      "has_messages": true,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "metadata",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 329,
+        "invalid_reasons": {
+          "missing metadata.answer": 329
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/probes/dpo_v2_style_train_probe_30.jsonl",
+      "record_count": 30,
+      "top_level_keys_sample": [
+        "answer",
+        "probe_bin",
+        "problem",
+        "problem_id",
+        "source",
+        "source_length_ratio"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 30,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 30,
+          "missing metadata.answer": 30
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/probes/dpo_v2_style_train_probe_30_eval.jsonl",
+      "record_count": 30,
+      "top_level_keys_sample": [
+        "answer",
+        "problem",
+        "problem_id",
+        "source"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 30,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 30,
+          "missing metadata.answer": 30
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/pilots/dpo_reasoning_quality_problems_50.jsonl",
+      "record_count": 50,
+      "top_level_keys_sample": [
+        "answer",
+        "problem",
+        "problem_id",
+        "source_record_id"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": false,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 50,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 50,
+          "missing metadata.answer": 50
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/pilots/dpo_rq_v2_problems_50.jsonl",
+      "record_count": 50,
+      "top_level_keys_sample": [
+        "answer",
+        "problem",
+        "problem_id",
+        "raw_answer",
+        "source"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 50,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 50,
+          "missing metadata.answer": 50
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/pilots/dpo_rq_v2b_problems_100.jsonl",
+      "record_count": 100,
+      "top_level_keys_sample": [
+        "answer",
+        "problem",
+        "problem_id"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": false,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 100,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 100,
+          "missing metadata.answer": 100
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/pilots/dpo_rq_v2c_problems_100.jsonl",
+      "record_count": 100,
+      "top_level_keys_sample": [
+        "answer",
+        "problem",
+        "problem_id"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": false,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 100,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 100,
+          "missing metadata.answer": 100
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/pilots/dpo_rq_v3/problems.jsonl",
+      "record_count": 250,
+      "top_level_keys_sample": [
+        "answer",
+        "phash",
+        "problem",
+        "problem_index"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "phash+index",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": false,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 250,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 250,
+          "missing metadata.answer": 250
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/pilots/dpo_rq_v3_b/problems.jsonl",
+      "record_count": 500,
+      "top_level_keys_sample": [
+        "answer",
+        "phash",
+        "problem",
+        "problem_index"
+      ],
+      "has_messages": false,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "phash+index",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": false,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 500,
+        "invalid_reasons": {
+          "missing or invalid 'messages' field": 500,
+          "missing metadata.answer": 500
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/pilots/boundary_only_sft_480.jsonl",
+      "record_count": 480,
+      "top_level_keys_sample": [
+        "messages",
+        "metadata",
+        "no_eos",
+        "prompt_suffix",
+        "target"
+      ],
+      "has_messages": true,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "metadata",
+      "has_answer": false,
+      "answer_source": "none",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 480,
+        "invalid_reasons": {
+          "missing metadata.answer": 480
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/pilots/boundary_only_dpo_480.jsonl",
+      "record_count": 480,
+      "top_level_keys_sample": [
+        "answer",
+        "chosen",
+        "messages",
+        "metadata",
+        "no_eos",
+        "pair_type",
+        "problem_id",
+        "prompt_suffix",
+        "rejected"
+      ],
+      "has_messages": true,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 480,
+        "invalid_reasons": {
+          "missing metadata.answer": 480
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/pilots/binary_prefix_dpo_control_480.jsonl",
+      "record_count": 480,
+      "top_level_keys_sample": [
+        "answer",
+        "chosen",
+        "messages",
+        "metadata",
+        "pair_type",
+        "problem_id",
+        "rejected"
+      ],
+      "has_messages": true,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 480,
+        "invalid_reasons": {
+          "missing metadata.answer": 480
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/pilots/dpo_v4_minimal_449.jsonl",
+      "record_count": 449,
+      "top_level_keys_sample": [
+        "answer",
+        "chosen",
+        "messages",
+        "metadata",
+        "pair_type",
+        "problem_id",
+        "rejected"
+      ],
+      "has_messages": true,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 449,
+        "invalid_reasons": {
+          "missing metadata.answer": 449
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    },
+    {
+      "path": "/Users/halucinaut/Vault/02_Projects/Polaris/data/math/pilots/dpo_v4_minimal_pilot_30.jsonl",
+      "record_count": 30,
+      "top_level_keys_sample": [
+        "answer",
+        "chosen",
+        "messages",
+        "metadata",
+        "pair_type",
+        "problem_id",
+        "rejected"
+      ],
+      "has_messages": true,
+      "has_metadata_answer": false,
+      "has_problem_id": true,
+      "problem_id_source": "top-level",
+      "has_answer": true,
+      "answer_source": "top-level",
+      "has_source_tag": true,
+      "has_level": false,
+      "grpo_compatible": false,
+      "grpo_schema": {
+        "valid_count": 0,
+        "invalid_count": 30,
+        "invalid_reasons": {
+          "missing metadata.answer": 30
+        }
+      },
+      "convertible_to_grpo": false,
+      "conversion_note": "",
+      "notes": []
+    }
+  ],
+  "candidate_audits": [
+    {
+      "candidate_name": "data/math/gsm8k/train.jsonl",
+      "total_records": 7473,
+      "unique_hashes": 7473,
+      "excluded_by_training": 500,
+      "excluded_by_eval": 80,
+      "excluded_by_pilots": 1027,
+      "excluded_by_union": 1430,
+      "clean_remaining": 6043,
+      "per_excluded_set": [
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "m1_sft_train",
+          "canonical_overlap_count": 500,
+          "id_match_count": 0,
+          "text_hash_match_count": 500,
+          "overlap_examples": [
+            "006735aa951670f3",
+            "01ccd05f4959f398",
+            "02a115691261cf54",
+            "02b7af6f737d002d",
+            "02b90df5127a8558"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "dpo_v1_train",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "dpo_v2_style_train",
+          "canonical_overlap_count": 449,
+          "id_match_count": 0,
+          "text_hash_match_count": 449,
+          "overlap_examples": [
+            "006735aa951670f3",
+            "01ccd05f4959f398",
+            "02b7af6f737d002d",
+            "03f7e54a2c05e266",
+            "047a90ce054944d4"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "dpo_v4_minimal_train",
+          "canonical_overlap_count": 449,
+          "id_match_count": 0,
+          "text_hash_match_count": 449,
+          "overlap_examples": [
+            "006735aa951670f3",
+            "01ccd05f4959f398",
+            "02b7af6f737d002d",
+            "03f7e54a2c05e266",
+            "047a90ce054944d4"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "dpo_v4_minimal_pilot",
+          "canonical_overlap_count": 30,
+          "id_match_count": 0,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "070a9000d8f3f68d",
+            "0dd63101ea6c0b53",
+            "1934da231dbb8b6d",
+            "329ba6ef9541ba92",
+            "3cff15eb1e6c8e30"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "boundary_only_dpo",
+          "canonical_overlap_count": 30,
+          "id_match_count": 0,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "binary_prefix_dpo_ctrl",
+          "canonical_overlap_count": 30,
+          "id_match_count": 0,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "boundary_only_sft",
+          "canonical_overlap_count": 30,
+          "id_match_count": 0,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "probe_30",
+          "canonical_overlap_count": 30,
+          "id_match_count": 0,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "probe_30_eval",
+          "canonical_overlap_count": 30,
+          "id_match_count": 0,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "stress_50",
+          "canonical_overlap_count": 50,
+          "id_match_count": 0,
+          "text_hash_match_count": 50,
+          "overlap_examples": [
+            "02a115691261cf54",
+            "02b90df5127a8558",
+            "04ed7b51f411946c",
+            "057de2edf2a2b4ec",
+            "0772a20d1837ea8f"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "stress_eval_50",
+          "canonical_overlap_count": 50,
+          "id_match_count": 0,
+          "text_hash_match_count": 50,
+          "overlap_examples": [
+            "02a115691261cf54",
+            "02b90df5127a8558",
+            "04ed7b51f411946c",
+            "057de2edf2a2b4ec",
+            "0772a20d1837ea8f"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "rq_v2_problems_50",
+          "canonical_overlap_count": 50,
+          "id_match_count": 0,
+          "text_hash_match_count": 50,
+          "overlap_examples": [
+            "02b7af6f737d002d",
+            "0351750d42fe13dd",
+            "090b28f13bc6599f",
+            "0b94354e544ed7b8",
+            "0cfb4b7144fa2a47"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "rq_v2b_problems_100",
+          "canonical_overlap_count": 100,
+          "id_match_count": 0,
+          "text_hash_match_count": 100,
+          "overlap_examples": [
+            "05e57a552cb900b0",
+            "0d5a9459e844545a",
+            "0e0eaf699fbf93ff",
+            "0ef939ddf0d08680",
+            "12463bb8d5c370bb"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "rq_v2c_problems_100",
+          "canonical_overlap_count": 100,
+          "id_match_count": 0,
+          "text_hash_match_count": 100,
+          "overlap_examples": [
+            "012b148057a0f3b2",
+            "02a2b119d3e07975",
+            "054b05f591605c57",
+            "05505c04f6fc07b8",
+            "0bf718851b0da23f"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "rq_v3_problems",
+          "canonical_overlap_count": 250,
+          "id_match_count": 0,
+          "text_hash_match_count": 250,
+          "overlap_examples": [
+            "0000de819ca24782",
+            "01855297071b9263",
+            "02267d55fcf7b2f6",
+            "043b517e450a57d8",
+            "0490949b5cd421d3"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "rq_v3b_problems",
+          "canonical_overlap_count": 500,
+          "id_match_count": 0,
+          "text_hash_match_count": 500,
+          "overlap_examples": [
+            "0045e62cc30ccd28",
+            "00ff86252d0fafc2",
+            "01855297071b9263",
+            "0206184101209cb4",
+            "035878be006fccd6"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "rq_problems_50",
+          "canonical_overlap_count": 50,
+          "id_match_count": 0,
+          "text_hash_match_count": 50,
+          "overlap_examples": [
+            "0aa5c0bef33d3e5a",
+            "0b4acceb3a98c19f",
+            "0e2c0311365f5181",
+            "0fec1b004dfd1d34",
+            "16a39ed2281127a9"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/train.jsonl",
+          "excluded_name": "gsm8k_50_eval_first50",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        }
+      ]
+    },
+    {
+      "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+      "total_records": 500,
+      "unique_hashes": 500,
+      "excluded_by_training": 500,
+      "excluded_by_eval": 80,
+      "excluded_by_pilots": 97,
+      "excluded_by_union": 500,
+      "clean_remaining": 0,
+      "per_excluded_set": [
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "m1_sft_train",
+          "canonical_overlap_count": 500,
+          "id_match_count": 500,
+          "text_hash_match_count": 500,
+          "overlap_examples": [
+            "006735aa951670f3",
+            "01ccd05f4959f398",
+            "02a115691261cf54",
+            "02b7af6f737d002d",
+            "02b90df5127a8558"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "dpo_v1_train",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "dpo_v2_style_train",
+          "canonical_overlap_count": 449,
+          "id_match_count": 449,
+          "text_hash_match_count": 449,
+          "overlap_examples": [
+            "006735aa951670f3",
+            "01ccd05f4959f398",
+            "02b7af6f737d002d",
+            "03f7e54a2c05e266",
+            "047a90ce054944d4"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "dpo_v4_minimal_train",
+          "canonical_overlap_count": 449,
+          "id_match_count": 449,
+          "text_hash_match_count": 449,
+          "overlap_examples": [
+            "006735aa951670f3",
+            "01ccd05f4959f398",
+            "02b7af6f737d002d",
+            "03f7e54a2c05e266",
+            "047a90ce054944d4"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "dpo_v4_minimal_pilot",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "070a9000d8f3f68d",
+            "0dd63101ea6c0b53",
+            "1934da231dbb8b6d",
+            "329ba6ef9541ba92",
+            "3cff15eb1e6c8e30"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "boundary_only_dpo",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "binary_prefix_dpo_ctrl",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "boundary_only_sft",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "probe_30",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "probe_30_eval",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "stress_50",
+          "canonical_overlap_count": 50,
+          "id_match_count": 50,
+          "text_hash_match_count": 50,
+          "overlap_examples": [
+            "02a115691261cf54",
+            "02b90df5127a8558",
+            "04ed7b51f411946c",
+            "057de2edf2a2b4ec",
+            "0772a20d1837ea8f"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "stress_eval_50",
+          "canonical_overlap_count": 50,
+          "id_match_count": 50,
+          "text_hash_match_count": 50,
+          "overlap_examples": [
+            "02a115691261cf54",
+            "02b90df5127a8558",
+            "04ed7b51f411946c",
+            "057de2edf2a2b4ec",
+            "0772a20d1837ea8f"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "rq_v2_problems_50",
+          "canonical_overlap_count": 5,
+          "id_match_count": 0,
+          "text_hash_match_count": 5,
+          "overlap_examples": [
+            "02b7af6f737d002d",
+            "680616b80b764b1a",
+            "9d71642f9168be5e",
+            "cd7c25acb2245052",
+            "cf3cdadd53c3be82"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "rq_v2b_problems_100",
+          "canonical_overlap_count": 7,
+          "id_match_count": 0,
+          "text_hash_match_count": 7,
+          "overlap_examples": [
+            "472ac87f38f649c9",
+            "7a02bd62e558558b",
+            "a653df05eb075220",
+            "b529d49c3b5a8614",
+            "b8c05eb8f1c34274"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "rq_v2c_problems_100",
+          "canonical_overlap_count": 8,
+          "id_match_count": 0,
+          "text_hash_match_count": 8,
+          "overlap_examples": [
+            "14cb6fa2bdb1a595",
+            "217f2e1167a837fa",
+            "59fff92cd0086a1d",
+            "782d5855692d1ebe",
+            "9989311289de0491"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "rq_v3_problems",
+          "canonical_overlap_count": 12,
+          "id_match_count": 0,
+          "text_hash_match_count": 12,
+          "overlap_examples": [
+            "223e53e79df20bb5",
+            "43186a75c84844cf",
+            "5b01f4e2dd87e9fb",
+            "97793c6c080ff7a7",
+            "9f6599c0178d24d6"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "rq_v3b_problems",
+          "canonical_overlap_count": 24,
+          "id_match_count": 0,
+          "text_hash_match_count": 24,
+          "overlap_examples": [
+            "0d1d6b18b034ff30",
+            "1467eb53a10bf7dc",
+            "2038ad92993d0d1f",
+            "4fde36dd676e0879",
+            "5393a5cb8aa4f208"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "rq_problems_50",
+          "canonical_overlap_count": 50,
+          "id_match_count": 50,
+          "text_hash_match_count": 50,
+          "overlap_examples": [
+            "0aa5c0bef33d3e5a",
+            "0b4acceb3a98c19f",
+            "0e2c0311365f5181",
+            "0fec1b004dfd1d34",
+            "16a39ed2281127a9"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/train_converted_d5_500.jsonl",
+          "excluded_name": "gsm8k_50_eval_first50",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        }
+      ]
+    },
+    {
+      "candidate_name": "data/math/splits/sft_v1.jsonl",
+      "total_records": 300,
+      "unique_hashes": 300,
+      "excluded_by_training": 300,
+      "excluded_by_eval": 47,
+      "excluded_by_pilots": 58,
+      "excluded_by_union": 300,
+      "clean_remaining": 0,
+      "per_excluded_set": [
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "m1_sft_train",
+          "canonical_overlap_count": 300,
+          "id_match_count": 0,
+          "text_hash_match_count": 300,
+          "overlap_examples": [
+            "02b7af6f737d002d",
+            "02b90df5127a8558",
+            "047a90ce054944d4",
+            "057de2edf2a2b4ec",
+            "070a9000d8f3f68d"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "dpo_v1_train",
+          "canonical_overlap_count": 0,
+          "id_match_count": 25,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "dpo_v2_style_train",
+          "canonical_overlap_count": 271,
+          "id_match_count": 0,
+          "text_hash_match_count": 271,
+          "overlap_examples": [
+            "02b7af6f737d002d",
+            "047a90ce054944d4",
+            "070a9000d8f3f68d",
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "dpo_v4_minimal_train",
+          "canonical_overlap_count": 271,
+          "id_match_count": 0,
+          "text_hash_match_count": 271,
+          "overlap_examples": [
+            "02b7af6f737d002d",
+            "047a90ce054944d4",
+            "070a9000d8f3f68d",
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "dpo_v4_minimal_pilot",
+          "canonical_overlap_count": 30,
+          "id_match_count": 0,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "070a9000d8f3f68d",
+            "0dd63101ea6c0b53",
+            "1934da231dbb8b6d",
+            "329ba6ef9541ba92",
+            "3cff15eb1e6c8e30"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "boundary_only_dpo",
+          "canonical_overlap_count": 19,
+          "id_match_count": 0,
+          "text_hash_match_count": 19,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "20604168dda90a2e",
+            "2d1e6d5c203b74c5"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "binary_prefix_dpo_ctrl",
+          "canonical_overlap_count": 19,
+          "id_match_count": 0,
+          "text_hash_match_count": 19,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "20604168dda90a2e",
+            "2d1e6d5c203b74c5"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "boundary_only_sft",
+          "canonical_overlap_count": 19,
+          "id_match_count": 0,
+          "text_hash_match_count": 19,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "20604168dda90a2e",
+            "2d1e6d5c203b74c5"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "probe_30",
+          "canonical_overlap_count": 19,
+          "id_match_count": 0,
+          "text_hash_match_count": 19,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "20604168dda90a2e",
+            "2d1e6d5c203b74c5"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "probe_30_eval",
+          "canonical_overlap_count": 19,
+          "id_match_count": 0,
+          "text_hash_match_count": 19,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "20604168dda90a2e",
+            "2d1e6d5c203b74c5"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "stress_50",
+          "canonical_overlap_count": 28,
+          "id_match_count": 0,
+          "text_hash_match_count": 28,
+          "overlap_examples": [
+            "02b90df5127a8558",
+            "057de2edf2a2b4ec",
+            "1d8bed9cca754dd0",
+            "1e14fd22fbdb9381",
+            "23f4a4818a4254f2"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "stress_eval_50",
+          "canonical_overlap_count": 28,
+          "id_match_count": 0,
+          "text_hash_match_count": 28,
+          "overlap_examples": [
+            "02b90df5127a8558",
+            "057de2edf2a2b4ec",
+            "1d8bed9cca754dd0",
+            "1e14fd22fbdb9381",
+            "23f4a4818a4254f2"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "rq_v2_problems_50",
+          "canonical_overlap_count": 2,
+          "id_match_count": 0,
+          "text_hash_match_count": 2,
+          "overlap_examples": [
+            "02b7af6f737d002d",
+            "9d71642f9168be5e"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "rq_v2b_problems_100",
+          "canonical_overlap_count": 4,
+          "id_match_count": 0,
+          "text_hash_match_count": 4,
+          "overlap_examples": [
+            "7a02bd62e558558b",
+            "b8c05eb8f1c34274",
+            "bedb14b73f1039bf",
+            "bf72703255d5aa67"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "rq_v2c_problems_100",
+          "canonical_overlap_count": 4,
+          "id_match_count": 0,
+          "text_hash_match_count": 4,
+          "overlap_examples": [
+            "59fff92cd0086a1d",
+            "782d5855692d1ebe",
+            "9989311289de0491",
+            "bc4f52998d57d338"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "rq_v3_problems",
+          "canonical_overlap_count": 9,
+          "id_match_count": 0,
+          "text_hash_match_count": 9,
+          "overlap_examples": [
+            "223e53e79df20bb5",
+            "43186a75c84844cf",
+            "5b01f4e2dd87e9fb",
+            "97793c6c080ff7a7",
+            "b536c532b7550315"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "rq_v3b_problems",
+          "canonical_overlap_count": 15,
+          "id_match_count": 0,
+          "text_hash_match_count": 15,
+          "overlap_examples": [
+            "0d1d6b18b034ff30",
+            "1467eb53a10bf7dc",
+            "4fde36dd676e0879",
+            "5393a5cb8aa4f208",
+            "5bee1c5de4a5287c"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "rq_problems_50",
+          "canonical_overlap_count": 29,
+          "id_match_count": 0,
+          "text_hash_match_count": 29,
+          "overlap_examples": [
+            "0b4acceb3a98c19f",
+            "0e2c0311365f5181",
+            "0fec1b004dfd1d34",
+            "1934da231dbb8b6d",
+            "1fa77fbe58234ba1"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v1.jsonl",
+          "excluded_name": "gsm8k_50_eval_first50",
+          "canonical_overlap_count": 0,
+          "id_match_count": 30,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        }
+      ]
+    },
+    {
+      "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+      "total_records": 500,
+      "unique_hashes": 500,
+      "excluded_by_training": 500,
+      "excluded_by_eval": 80,
+      "excluded_by_pilots": 97,
+      "excluded_by_union": 500,
+      "clean_remaining": 0,
+      "per_excluded_set": [
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "m1_sft_train",
+          "canonical_overlap_count": 500,
+          "id_match_count": 500,
+          "text_hash_match_count": 500,
+          "overlap_examples": [
+            "006735aa951670f3",
+            "01ccd05f4959f398",
+            "02a115691261cf54",
+            "02b7af6f737d002d",
+            "02b90df5127a8558"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "dpo_v1_train",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "dpo_v2_style_train",
+          "canonical_overlap_count": 449,
+          "id_match_count": 449,
+          "text_hash_match_count": 449,
+          "overlap_examples": [
+            "006735aa951670f3",
+            "01ccd05f4959f398",
+            "02b7af6f737d002d",
+            "03f7e54a2c05e266",
+            "047a90ce054944d4"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "dpo_v4_minimal_train",
+          "canonical_overlap_count": 449,
+          "id_match_count": 449,
+          "text_hash_match_count": 449,
+          "overlap_examples": [
+            "006735aa951670f3",
+            "01ccd05f4959f398",
+            "02b7af6f737d002d",
+            "03f7e54a2c05e266",
+            "047a90ce054944d4"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "dpo_v4_minimal_pilot",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "070a9000d8f3f68d",
+            "0dd63101ea6c0b53",
+            "1934da231dbb8b6d",
+            "329ba6ef9541ba92",
+            "3cff15eb1e6c8e30"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "boundary_only_dpo",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "binary_prefix_dpo_ctrl",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "boundary_only_sft",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "probe_30",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "probe_30_eval",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "stress_50",
+          "canonical_overlap_count": 50,
+          "id_match_count": 50,
+          "text_hash_match_count": 50,
+          "overlap_examples": [
+            "02a115691261cf54",
+            "02b90df5127a8558",
+            "04ed7b51f411946c",
+            "057de2edf2a2b4ec",
+            "0772a20d1837ea8f"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "stress_eval_50",
+          "canonical_overlap_count": 50,
+          "id_match_count": 50,
+          "text_hash_match_count": 50,
+          "overlap_examples": [
+            "02a115691261cf54",
+            "02b90df5127a8558",
+            "04ed7b51f411946c",
+            "057de2edf2a2b4ec",
+            "0772a20d1837ea8f"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "rq_v2_problems_50",
+          "canonical_overlap_count": 5,
+          "id_match_count": 0,
+          "text_hash_match_count": 5,
+          "overlap_examples": [
+            "02b7af6f737d002d",
+            "680616b80b764b1a",
+            "9d71642f9168be5e",
+            "cd7c25acb2245052",
+            "cf3cdadd53c3be82"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "rq_v2b_problems_100",
+          "canonical_overlap_count": 7,
+          "id_match_count": 0,
+          "text_hash_match_count": 7,
+          "overlap_examples": [
+            "472ac87f38f649c9",
+            "7a02bd62e558558b",
+            "a653df05eb075220",
+            "b529d49c3b5a8614",
+            "b8c05eb8f1c34274"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "rq_v2c_problems_100",
+          "canonical_overlap_count": 8,
+          "id_match_count": 0,
+          "text_hash_match_count": 8,
+          "overlap_examples": [
+            "14cb6fa2bdb1a595",
+            "217f2e1167a837fa",
+            "59fff92cd0086a1d",
+            "782d5855692d1ebe",
+            "9989311289de0491"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "rq_v3_problems",
+          "canonical_overlap_count": 12,
+          "id_match_count": 0,
+          "text_hash_match_count": 12,
+          "overlap_examples": [
+            "223e53e79df20bb5",
+            "43186a75c84844cf",
+            "5b01f4e2dd87e9fb",
+            "97793c6c080ff7a7",
+            "9f6599c0178d24d6"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "rq_v3b_problems",
+          "canonical_overlap_count": 24,
+          "id_match_count": 0,
+          "text_hash_match_count": 24,
+          "overlap_examples": [
+            "0d1d6b18b034ff30",
+            "1467eb53a10bf7dc",
+            "2038ad92993d0d1f",
+            "4fde36dd676e0879",
+            "5393a5cb8aa4f208"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "rq_problems_50",
+          "canonical_overlap_count": 50,
+          "id_match_count": 50,
+          "text_hash_match_count": 50,
+          "overlap_examples": [
+            "0aa5c0bef33d3e5a",
+            "0b4acceb3a98c19f",
+            "0e2c0311365f5181",
+            "0fec1b004dfd1d34",
+            "16a39ed2281127a9"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_d5_500.jsonl",
+          "excluded_name": "gsm8k_50_eval_first50",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        }
+      ]
+    },
+    {
+      "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+      "total_records": 449,
+      "unique_hashes": 449,
+      "excluded_by_training": 449,
+      "excluded_by_eval": 30,
+      "excluded_by_pilots": 96,
+      "excluded_by_union": 449,
+      "clean_remaining": 0,
+      "per_excluded_set": [
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "m1_sft_train",
+          "canonical_overlap_count": 449,
+          "id_match_count": 449,
+          "text_hash_match_count": 449,
+          "overlap_examples": [
+            "006735aa951670f3",
+            "01ccd05f4959f398",
+            "02b7af6f737d002d",
+            "03f7e54a2c05e266",
+            "047a90ce054944d4"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "dpo_v1_train",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "dpo_v2_style_train",
+          "canonical_overlap_count": 449,
+          "id_match_count": 449,
+          "text_hash_match_count": 449,
+          "overlap_examples": [
+            "006735aa951670f3",
+            "01ccd05f4959f398",
+            "02b7af6f737d002d",
+            "03f7e54a2c05e266",
+            "047a90ce054944d4"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "dpo_v4_minimal_train",
+          "canonical_overlap_count": 449,
+          "id_match_count": 449,
+          "text_hash_match_count": 449,
+          "overlap_examples": [
+            "006735aa951670f3",
+            "01ccd05f4959f398",
+            "02b7af6f737d002d",
+            "03f7e54a2c05e266",
+            "047a90ce054944d4"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "dpo_v4_minimal_pilot",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "070a9000d8f3f68d",
+            "0dd63101ea6c0b53",
+            "1934da231dbb8b6d",
+            "329ba6ef9541ba92",
+            "3cff15eb1e6c8e30"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "boundary_only_dpo",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "binary_prefix_dpo_ctrl",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "boundary_only_sft",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "probe_30",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "probe_30_eval",
+          "canonical_overlap_count": 30,
+          "id_match_count": 30,
+          "text_hash_match_count": 30,
+          "overlap_examples": [
+            "086499d4a1a63598",
+            "09c6d43b08bdd4a0",
+            "0c0fa1223acf2929",
+            "14ff19386aa0bfc9",
+            "150999add4738c60"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "stress_50",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "stress_eval_50",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "rq_v2_problems_50",
+          "canonical_overlap_count": 5,
+          "id_match_count": 0,
+          "text_hash_match_count": 5,
+          "overlap_examples": [
+            "02b7af6f737d002d",
+            "680616b80b764b1a",
+            "9d71642f9168be5e",
+            "cd7c25acb2245052",
+            "cf3cdadd53c3be82"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "rq_v2b_problems_100",
+          "canonical_overlap_count": 7,
+          "id_match_count": 0,
+          "text_hash_match_count": 7,
+          "overlap_examples": [
+            "472ac87f38f649c9",
+            "7a02bd62e558558b",
+            "a653df05eb075220",
+            "b529d49c3b5a8614",
+            "b8c05eb8f1c34274"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "rq_v2c_problems_100",
+          "canonical_overlap_count": 7,
+          "id_match_count": 0,
+          "text_hash_match_count": 7,
+          "overlap_examples": [
+            "14cb6fa2bdb1a595",
+            "217f2e1167a837fa",
+            "59fff92cd0086a1d",
+            "782d5855692d1ebe",
+            "9989311289de0491"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "rq_v3_problems",
+          "canonical_overlap_count": 12,
+          "id_match_count": 0,
+          "text_hash_match_count": 12,
+          "overlap_examples": [
+            "223e53e79df20bb5",
+            "43186a75c84844cf",
+            "5b01f4e2dd87e9fb",
+            "97793c6c080ff7a7",
+            "9f6599c0178d24d6"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "rq_v3b_problems",
+          "canonical_overlap_count": 24,
+          "id_match_count": 0,
+          "text_hash_match_count": 24,
+          "overlap_examples": [
+            "0d1d6b18b034ff30",
+            "1467eb53a10bf7dc",
+            "2038ad92993d0d1f",
+            "4fde36dd676e0879",
+            "5393a5cb8aa4f208"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "rq_problems_50",
+          "canonical_overlap_count": 50,
+          "id_match_count": 50,
+          "text_hash_match_count": 50,
+          "overlap_examples": [
+            "0aa5c0bef33d3e5a",
+            "0b4acceb3a98c19f",
+            "0e2c0311365f5181",
+            "0fec1b004dfd1d34",
+            "16a39ed2281127a9"
+          ]
+        },
+        {
+          "candidate_name": "data/math/splits/sft_v2_style_control_train_449.jsonl",
+          "excluded_name": "gsm8k_50_eval_first50",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        }
+      ]
+    },
+    {
+      "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+      "total_records": 500,
+      "unique_hashes": 500,
+      "excluded_by_training": 329,
+      "excluded_by_eval": 50,
+      "excluded_by_pilots": 0,
+      "excluded_by_union": 343,
+      "clean_remaining": 157,
+      "per_excluded_set": [
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "m1_sft_train",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "dpo_v1_train",
+          "canonical_overlap_count": 329,
+          "id_match_count": 329,
+          "text_hash_match_count": 329,
+          "overlap_examples": [
+            "01a92fb2558a6783",
+            "01b6e4425c843972",
+            "020dd59bc4aa1d39",
+            "047bfe7c5a251804",
+            "04d287da9937442e"
+          ]
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "dpo_v2_style_train",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "dpo_v4_minimal_train",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "dpo_v4_minimal_pilot",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "boundary_only_dpo",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "binary_prefix_dpo_ctrl",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "boundary_only_sft",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "probe_30",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "probe_30_eval",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "stress_50",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "stress_eval_50",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "rq_v2_problems_50",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "rq_v2b_problems_100",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "rq_v2c_problems_100",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "rq_v3_problems",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "rq_v3b_problems",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "rq_problems_50",
+          "canonical_overlap_count": 0,
+          "id_match_count": 0,
+          "text_hash_match_count": 0,
+          "overlap_examples": []
+        },
+        {
+          "candidate_name": "data/math/gsm8k/split/test_converted_500.jsonl",
+          "excluded_name": "gsm8k_50_eval_first50",
+          "canonical_overlap_count": 50,
+          "id_match_count": 50,
+          "text_hash_match_count": 50,
+          "overlap_examples": [
+            "020dd59bc4aa1d39",
+            "0df5373de2458bb7",
+            "0e272a4128ea99c6",
+            "0e4d0454881478f9",
+            "1554ee1ecd42fa4f"
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_files_audited": 33,
+    "grpo_direct_compatible_files": 3,
+    "grpo_direct_compatible_records": 1249,
+    "grpo_convertible_files": 3,
+    "hendrycks_math_status": "NOT_DOWNLOADED",
+    "openr1_math_status": "NOT_DOWNLOADED",
+    "math_level_3_5_file_exists": false
+  }
+}
